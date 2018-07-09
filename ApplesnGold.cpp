@@ -64,7 +64,7 @@ class ApplePickerUpgrade {
 };
 
 ApplePickerUpgrade applePickers("Apple Picker", 1, 10);
-ApplePickerUpgrade wizards(2, 10);
+ApplePickerUpgrade wizards("Wizards", 2, 10);
 
 void prepareSaveData() {
   std::ofstream out;

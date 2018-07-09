@@ -206,11 +206,11 @@ void round(bool restarted) {
     return;
   }
   
-  float multiplier = (std::floorf((int)(((double)(std::rand()) / RAND_MAX / 4 + .25) * 100)) / 100) + (platinum / 100);
+  float multiplier = (std::floorf((int)(((double)(std::rand()) / RAND_MAX / 4 + .25) * 100)) / 100) + (platinum / 100.0);
   if(platinum == 0) {
     std::cout << "Do you want to sell your apples for " << multiplier << " each? (y/n)" << std::endl;
   } else {
-    std::cout << "Do you want to sell your apples for " << multiplier - (platinum / 100) << " + " << platinum / 100.0 << " for platinum each? (y/n)" << std::endl;
+    std::cout << "Do you want to sell your apples for " << multiplier - (platinum / 100.0) << " + " << platinum / 100.0 << " for platinum each? (y/n)" << std::endl;
   }
   std::cin >> ans;
   

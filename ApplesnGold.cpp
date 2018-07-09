@@ -20,38 +20,51 @@ int platinum = 0;
 int platinumPrestige = 0;
 float lifetimeGold = 0;
 
-const char* homedir = getenv("HOME");
-std::ofstream dataOut;
-std::ifstream dataIn;
-
 class ApplePickerUpgrade {
  public:
-  int upgradeMultiplier;
-  int upgradeMax;
-  int level;
+  ApplePickerUpgrade(std::string name, int multiplier, int max) :
+                     name_(std::move(name)),
+                     multiplier_(multiplier),
+                     max_(max),
+                     level_(0) {}
 
-  ApplePickerUpgrade(int multiplier, int max) :
-                     upgradeMultiplier(multiplier),
-                     upgradeMax(max) {
-    level = 0;
+  bool upgrade() {
+    if (level_ < max_) {
+      ++level_;
+      return true;
+    }
+    return false;
   }
 
-  int upgrade() {
-    return (++level <= upgradeMax) ? level : level;
+  float cost() {
+    return multiplier_ * (level_ + 1) * .5;
+  }
+
+  int pick() {
+    return multiplier_ * level_;
+  }
+
+  int max() {
+    return max_;
+  }
+
+  int level() {
+    return level_;
+  }
+
+  void load(int level) {
+    level_ = std::min(level, max_);
   }
 
  private:
-  int multiplier_;
-  int max_;
+  const std::string name_;
+  const int multiplier_;
+  const int max_;
   int level_;
 };
 
-ApplePickerUpgrade applePickers(1, 10);
+ApplePickerUpgrade applePickers("Apple Picker", 1, 10);
 ApplePickerUpgrade wizards(2, 10);
-
-float costAlgo(ApplePickerUpgrade upgrader) {
-  return upgrader.upgradeMultiplier * (upgrader.level*upgrader.level + 1) * .5;
-}
 
 void prepareSaveData() {
   std::ofstream out;
@@ -66,8 +79,8 @@ void prepareSaveData() {
   out << "lifetimeGold " << lifetimeGold << "\n";
   out << "platinum " << platinum << "\n";
   out << "platinumGain " << platinumPrestige << "\n\n";
-  out << "applePickers " << applePickers.level << "\n";
-  out << "wizards " << wizards.level;
+  out << "applePickers " << applePickers.level() << "\n";
+  out << "wizards " << wizards.level();
   out.close();
 }
 
@@ -93,54 +106,50 @@ void shop() {
   system("clear");
   std::cout << "SHOP" << std::endl;
   std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl << std::endl;
-  std::cout << "1: Apple Picker - " << costAlgo(applePickers) << " Gold - " << applePickers.level << "/" << applePickers.upgradeMax << std::endl;
-  std::cout << "2: Wizard - " << costAlgo(wizards) << " Gold - " << wizards.level << "/" << wizards.upgradeMax << std::endl;
+  std::cout << "1: Apple Picker - " << applePickers.cost() << " Gold - " << applePickers.level() << "/" << applePickers.max() << std::endl;
+  std::cout << "2: Wizard - " << wizards.cost() << " Gold - " << wizards.level() << "/" << wizards.max() << std::endl;
   std::cout << "Enter a number OR enter q/Q." << std::endl << std::endl;
   std::string ans;
   std::cin >> ans;
   
   if(ans == "1") {
-      if(gold >= costAlgo(applePickers)) {
-        if(applePickers.upgrade() == applePickers.upgradeMax + 1) {
-          applePickers.level--;
-          std::cout << std::endl << "Oops! It is at it's max level!" << std::endl;
-          sleep(2);
-        } else {
-          applePickers.level--;
-          gold -= costAlgo(applePickers);
-          applePickers.level++;
-          std::cout << std::endl <<  "You bought an apple picker!" << std::endl;
-          sleep(1);
-          shop();
-          return;
-        }
-      } else {
-        std::cout << std::endl << "Oops! It looks like you can't afford that!" << std::endl;
-        sleep(2);
+    const float cost = applePickers.cost();
+    if(gold >= cost) {
+      if(applePickers.upgrade()) {
+        gold -= cost;
+        std::cout << std::endl <<  "You bought an apple picker!" << std::endl;
+        sleep(1);
         shop();
         return;
+      } else {
+        std::cout << std::endl << "Oops! It is at it's max level!" << std::endl;
+        sleep(2);
       }
+    } else {
+      std::cout << std::endl << "Oops! It looks like you can't afford that!" << std::endl;
+      sleep(2);
+      shop();
+      return;
+    }
   } else if(ans == "2") {
-      if(gold >= costAlgo(wizards)) {
-        if(wizards.upgrade() == wizards.upgradeMax + 1) {
-          wizards.level--;
-          std::cout << std::endl << "Oops! It is at it's max level!" << std::endl;
-          sleep(2);
-        } else {
-          wizards.level--;
-          gold -= costAlgo(wizards);
-          wizards.level++;
-          std::cout << std::endl <<  "You bought a wizard!" << std::endl;
-          sleep(1);
-          shop();
-          return;
-        }
-      } else {
-        std::cout << std::endl << "Oops! It looks like you can't afford that!" << std::endl;
-        sleep(2);
+    const float cost = wizards.cost();
+    if(gold >= cost) {
+      if(wizards.upgrade()) {
+        gold -= cost;
+        std::cout << std::endl <<  "You bought a wizard!" << std::endl;
+        sleep(1);
         shop();
         return;
+      } else {
+        std::cout << std::endl << "Oops! It is at it's max level!" << std::endl;
+        sleep(2);
       }
+    } else {
+      std::cout << std::endl << "Oops! It looks like you can't afford that!" << std::endl;
+      sleep(2);
+      shop();
+      return;
+    }
   } else if(ans == "q") {
       prepareSaveData();
       return;
@@ -174,9 +183,7 @@ void round(bool restarted) {
   
   if(ans == "y") {
     int prevApples = apples;
-    apples += 1 +
-              applePickers.upgradeMultiplier * applePickers.level +
-              wizards.upgradeMultiplier * wizards.level;
+    apples += 1 + applePickers.pick() + wizards.pick();
     if(apples - prevApples == 1) {
       std::cout << "You picked an apple!" << std::endl;
     } else {
@@ -203,7 +210,7 @@ void round(bool restarted) {
   if(platinum == 0) {
     std::cout << "Do you want to sell your apples for " << multiplier << " each? (y/n)" << std::endl;
   } else {
-    std::cout << "Do you want to sell your apples for " << multiplier - (platinum / 100) << " + " << platinum / 100 << " for platinum each? (y/n)" << std::endl;
+    std::cout << "Do you want to sell your apples for " << multiplier - (platinum / 100) << " + " << platinum / 100.0 << " for platinum each? (y/n)" << std::endl;
   }
   std::cin >> ans;
   
@@ -307,9 +314,9 @@ int main(int argc, char** argv) {
       } else if(stat == "platinumGain") {
         platinumPrestige = value;
       } else if(stat == "applePickers") {
-        applePickers.level = std::min<int>(value, applePickers.upgradeMax);
+        applePickers.load(value);
       } else if(stat == "wizards") {
-        wizards.level = std::min<int>(value, wizards.upgradeMax);
+        wizards.load(value);
       } else {
         throw 1; // Activate catch statement
       }

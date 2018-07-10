@@ -29,18 +29,6 @@ std::string string_format( const std::string& format, Args ... args ) {
     return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
 }
 
-void ClearScreen() {
-  if (!cur_term) {
-    int result;
-    setupterm( NULL, STDOUT_FILENO, &result );
-    if (result <= 0) return;
-  }
-
-  char command[] = "clear";
-
-  putp( tigetstr( command ) );
-}
-
 class ApplePickerUpgrade {
  public:
   ApplePickerUpgrade(std::string name, int multiplier, int max) :
@@ -128,8 +116,7 @@ bool prestige() {
 void shop() {
   gold = std::floorf(gold * 100) / 100;
   lifetimeGold = std::floorf(lifetimeGold * 100) / 100;
-  ClearScreen();
-  std::cout << "SHOP" << std::endl;
+  std::cout << "\033[2J\033[HSHOP" << std::endl;
   std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl << std::endl;
   std::cout << "1: " << applePickers.StoreLabel() << std::endl;
   std::cout << "2: " << wizards.StoreLabel() << std::endl;

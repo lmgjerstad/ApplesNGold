@@ -109,7 +109,7 @@ void game() {
     std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl
               << std::endl;
     if (platinum > 0) {
-      std::cout << "\033[1;36mPlatinum: " << platinum << "\033[0m" << std::endl
+      std::cout << "\033[1;96mPlatinum: " << platinum << "\033[0m" << std::endl
                 << std::endl;
     }
 

@@ -55,6 +55,10 @@ class ApplePickerUpgrade {
   void load(int level) {
     level_ = std::min(level, max_);
   }
+  
+  std::string name() {
+    return name_;
+  }
 
  private:
   const std::string name_;
@@ -64,7 +68,7 @@ class ApplePickerUpgrade {
 };
 
 ApplePickerUpgrade applePickers("Apple Picker", 1, 10);
-ApplePickerUpgrade wizards("Wizards", 2, 10);
+ApplePickerUpgrade wizards("Wizard", 2, 10);
 
 void prepareSaveData() {
   std::ofstream out;
@@ -106,8 +110,8 @@ void shop() {
   system("clear");
   std::cout << "SHOP" << std::endl;
   std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl << std::endl;
-  std::cout << "1: Apple Picker - " << applePickers.cost() << " Gold - " << applePickers.level() << "/" << applePickers.max() << std::endl;
-  std::cout << "2: Wizard - " << wizards.cost() << " Gold - " << wizards.level() << "/" << wizards.max() << std::endl;
+  std::cout << "1: " << applePickers.name() << " - " << applePickers.cost() << " Gold - " << applePickers.level() << "/" << applePickers.max() << std::endl;
+  std::cout << "2: " << wizards.name() << " - " << wizards.cost() << " Gold - " << wizards.level() << "/" << wizards.max() << std::endl;
   std::cout << "Enter a number OR enter q/Q." << std::endl << std::endl;
   std::string ans;
   std::cin >> ans;
@@ -119,6 +123,7 @@ void shop() {
         gold -= cost;
         std::cout << std::endl <<  "You bought an apple picker!" << std::endl;
         sleep(1);
+        prepareSaveData();
         shop();
         return;
       } else {
@@ -128,6 +133,7 @@ void shop() {
     } else {
       std::cout << std::endl << "Oops! It looks like you can't afford that!" << std::endl;
       sleep(2);
+      prepareSaveData();
       shop();
       return;
     }
@@ -138,6 +144,7 @@ void shop() {
         gold -= cost;
         std::cout << std::endl <<  "You bought a wizard!" << std::endl;
         sleep(1);
+        prepareSaveData();
         shop();
         return;
       } else {
@@ -147,10 +154,11 @@ void shop() {
     } else {
       std::cout << std::endl << "Oops! It looks like you can't afford that!" << std::endl;
       sleep(2);
+      prepareSaveData();
       shop();
       return;
     }
-  } else if(ans == "q") {
+  } else if(ans == "q" || ans == "Q") {
       prepareSaveData();
       return;
   } else {
@@ -249,6 +257,8 @@ void round(bool restarted) {
         roundNum = 0;
         platinum += platinumPrestige;
         platinumPrestige = 0;
+        applePickers.load(0);
+        wizards.load(0);
         std::cout << "Prestiging!" << std::endl;
         sleep(3);
         round(false);
@@ -323,7 +333,7 @@ int main(int argc, char** argv) {
     } catch(...) {
       std::cout << "The save file \"" << filename << "\" is corrupted.";
       sleep(2);
-      return 0;
+      return 1;
     }
   }
 
@@ -333,6 +343,7 @@ int main(int argc, char** argv) {
   sleep(2);
   round(false);
   std::cout << "Ok. Bye " << name << "!" << std::endl;
+  sleep(2); // Don't end immediately.
   system("clear");
   return 0;
 }

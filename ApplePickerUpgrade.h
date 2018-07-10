@@ -1,6 +1,8 @@
 #ifndef __APPLEPICKERUPGRADE_H_INCLUDED__
 #define __APPLEPICKERUPGRADE_H_INCLUDED__
 
+#include <cmath>
+
 template <typename... Args>
 std::string string_format(const std::string &format, Args... args) {
   size_t size =
@@ -13,8 +15,8 @@ std::string string_format(const std::string &format, Args... args) {
 
 class ApplePickerUpgrade {
 public:
-  ApplePickerUpgrade(std::string name, int multiplier, int max)
-      : name_(std::move(name)), multiplier_(multiplier), max_(max), level_(0) {}
+  ApplePickerUpgrade(std::string name, float multiplier, int max, float base_price)
+      : name_(std::move(name)), multiplier_(multiplier), max_(max), base_price_(base_price), level_(0) {}
 
   bool upgrade() {
     if (level_ < max_) {
@@ -26,7 +28,7 @@ public:
     return false;
   }
 
-  float cost() { return multiplier_ * (level_ + 1) * (level_ + 1); }
+  float cost() { return std::pow(multiplier_, level_) * base_price_; }
 
   int pick() { return multiplier_ * level_; }
 
@@ -43,8 +45,9 @@ public:
 
 private:
   const std::string name_;
-  const int multiplier_;
-  const int max_;
+  const float multiplier_;
+  const int max_; 
+  float base_price_;
   int level_;
 };
 

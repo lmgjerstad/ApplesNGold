@@ -25,9 +25,9 @@ int platinum = 0;
 int platinumPrestige = 0;
 float lifetimeGold = 0;
 
-ApplePickerUpgrade applePickers("Apple Picker", 1, 10);
-ApplePickerUpgrade wizards("Wizard", 2, 10);
-ApplePickerUpgrade tractors("Tractor", 5, 15);
+ApplePickerUpgrade applePickers("Apple Picker", 1.1, 10, 1);
+ApplePickerUpgrade wizards("Wizard", 2, 10, 5);
+ApplePickerUpgrade tractors("Tractor", 5, 15, 15);
 
 void prepareSaveData() {
   std::ofstream out;

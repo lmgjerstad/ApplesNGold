@@ -98,7 +98,8 @@ void shop() {
 }
 
 void game() {
-  std::vector<ApplePickerUpgrade *> upgrades({&applePickers, &wizards, &tractors});
+  std::vector<ApplePickerUpgrade *> upgrades(
+      {&applePickers, &wizards, &tractors});
   while (true) {
     gold = std::floorf(gold * 100) / 100;
     lifetimeGold = std::floorf(lifetimeGold * 100) / 100;
@@ -111,85 +112,75 @@ void game() {
       std::cout << "\033[1;36mPlatinum: " << platinum << "\033[0m" << std::endl
                 << std::endl;
     }
-    
-    if((applePickers.pick() + wizards.pick()) == 0) {
-      std::cout << "1: Pick an apple" << std::endl;
-    } else {
-      std::cout << "1: Pick " << (1 + applePickers.pick() + wizards.pick()) << " apples" << std::endl;
+
+    Menu menu;
+    std::string pick_text;
+    int pick_qty = 1;
+    for (auto *picker : upgrades) {
+      pick_qty += picker->pick();
     }
-    
-    
+    if (pick_qty == 1) {
+      pick_text = "Pick an apple";
+    } else {
+      pick_text = string_format("Pick %d apples", pick_qty);
+    }
+    menu.AddOption(std::move(pick_text), [pick_qty]() {
+      apples += pick_qty;
+      std::cout << "You picked " << pick_qty
+                << (pick_qty > 1 ? " apples!" : " apple!") << std::endl;
+    });
+
     float multiplier =
-      (std::floorf(
-        (int)(((double)(std::rand()) / RAND_MAX / 4 + .25) * 100)) /
-      100) + 
-      (platinum / 100.0);
+        (std::floorf(
+             (int)(((double)(std::rand()) / RAND_MAX / 4 + .25) * 100)) /
+         100) +
+        (platinum / 100.0);
 
-    if(platinum == 0) {
-      std::cout << "2: Sell " << apples << " apples for " << (multiplier * apples) << " gold" << std::endl;
+    std::string sell_text;
+    if (platinum == 0) {
+      sell_text = string_format("Sell %d apples for %0.02f gold", apples,
+                                (multiplier * apples));
     } else {
-      std::cout << "2: Sell " << apples << " apples for " << (multiplier * apples) << " gold, including platinum reward" << std::endl;
+      sell_text = string_format(
+          "Sell %d apples for %0.02f gold, including platinum reward", apples,
+          (multiplier * apples));
     }
-    
-    std::cout << "3: Go to she shop" << std::endl;
-
-    if(platinum > 0 || lifetimeGold >= 1000) {
-      platinumPrestige = lifetimeGold / 100;
-      std::cout << "4: Prestige for " << platinumPrestige << " platinum" << std::endl;
-    }
-
-    std::cout << "Enter a number OR q/Q to quit." << std::endl << std::endl;
-
-    std::string ans;
-
-    std::cin >> ans;
-
-    if(ans == "1") {
-      apples += 1 + applePickers.pick() + wizards.pick();
-      std::cout << "You picked " << applePickers.pick() + wizards.pick() + 1 << ((applePickers.pick() + wizards.pick() > 0) ? " apples!" : " apple!") << std::endl;
-      sleep(1);
-      continue;
-    } else if(ans == "2") {
-      std::cout << "You sold " << apples << ((apples > 1 || apples == 0) ? " apples for " : " apple for") << multiplier * apples << " gold!" << std::endl;
+    menu.AddOption(std::move(sell_text), [multiplier]() {
+      std::cout << "You sold " << apples
+                << ((apples > 1 || apples == 0) ? " apples for " : " apple for")
+                << multiplier * apples << " gold!" << std::endl;
       gold += multiplier * apples;
       lifetimeGold += multiplier * apples;
       apples = 0;
-      sleep(2);
-      continue;
-    } else if(ans == "3") {
-      shop();
-      continue;
-    } else if(ans == "4") {
-      if(platinum > 0 || lifetimeGold >= 1000) {
-        if(prestige()) {
-          std::cout << "Prestiging!" << std::endl;
-          sleep(3);
-          apples = 0;
-          gold = 0;
-          for(int i = 0; i < upgrades.size(); ++i) {
-            upgrades[i]->load(0);
-          }
+    });
 
-          platinum += platinumPrestige;
-          platinumPrestige = 0;
-          lifetimeGold = 0;
-          continue;
-        } else {
-          continue;
-        }
-      } else {
-        std::cout << "Sorry! Didn't understand that!" << std::endl;
-        sleep(2);
-        continue;
-      }
-    } else if(ans == "q" || ans == "Q") {
-      prepareSaveData();
-      break;
-    } else {
-      std::cout << "Sorry! Didn't understand that!" << std::endl;
-      sleep(2);
-      continue;
+    menu.AddOption("Go to the shop", []() { shop(); });
+
+    if (platinum > 0 || lifetimeGold >= 1000) {
+      platinumPrestige = lifetimeGold / 100;
+      menu.AddOption(
+          string_format("Prestige for %d platinum", platinumPrestige),
+          [&upgrades]() {
+            if (prestige()) {
+              std::cout << "Prestiging!" << std::endl;
+              apples = 0;
+              gold = 0;
+              for (int i = 0; i < upgrades.size(); ++i) {
+                upgrades[i]->load(0);
+              }
+
+              platinum += platinumPrestige;
+              platinumPrestige = 0;
+              lifetimeGold = 0;
+            }
+          });
     }
+
+    if (menu.Execute() == Menu::Result::kQuit) {
+      prepareSaveData();
+      return;
+    }
+    sleep(1);
   }
 }
 

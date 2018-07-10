@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 
 #include "ApplePickerUpgrade.h"
+#include "menu.h"
 
 std::string name;
 std::string filename;
@@ -71,45 +72,32 @@ void shop() {
     std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl
               << std::endl;
 
-    for (int i = 0; i < options.size(); ++i) {
-      std::cout << i + 1 << ": " << options[i]->StoreLabel() << std::endl;
+    Menu menu;
+    for (auto* picker : options) {
+      menu.AddOption(picker->StoreLabel(), [picker]() {
+          const float cost = picker->cost();
+          if (gold > cost) {
+            if (picker->upgrade()) {
+              gold -= cost;
+              prepareSaveData();
+            }
+          } else {
+            std::cout << std::endl
+                      << "Oops! It looks like you can't afford that!" << std::endl;
+          }
+          });
     }
 
-    std::cout << "Enter a number OR enter q/Q." << std::endl << std::endl;
-    std::string ans;
-    std::cin >> ans;
-
-    if (ans == "q" || ans == "Q") {
+    if (menu.Execute() == Menu::Result::kQuit) {
       return;
     }
-
-    int selection = strtol(ans.c_str(), nullptr, 10);
-    if (selection <= 0 || selection > options.size()) {
-      std::cout << "Sorry! Didn't understand that!" << std::endl;
-      sleep(2);
-      continue;
-    }
-
-    auto purchase = options[selection - 1];
-    const float cost = purchase->cost();
-    if (gold >= cost) {
-      if (purchase->upgrade()) {
-        gold -= cost;
-        prepareSaveData();
-        sleep(1);
-        continue;
-      }
-    } else {
-      std::cout << std::endl
-                << "Oops! It looks like you can't afford that!" << std::endl;
-      sleep(2);
-      continue;
-    }
+    sleep(2);
   }
 }
 
 void game() {
   std::vector<ApplePickerUpgrade *> upgrades({&applePickers, &wizards});
+
   while (true) {
     gold = std::floorf(gold * 100) / 100;
     lifetimeGold = std::floorf(lifetimeGold * 100) / 100;

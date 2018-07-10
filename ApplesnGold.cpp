@@ -18,7 +18,6 @@ std::string name;
 std::string filename;
 int apples = 0;
 float gold = 0;
-int roundNum = 0;
 
 // Prestige mechanics
 int platinum = 0;
@@ -86,7 +85,8 @@ void shop() {
 
     int selection = strtol(ans.c_str(), nullptr, 10);
     if (selection <= 0 || selection > options.size()) {
-      std::cout << "Sorry! Didn't understand that." << std::endl;
+      std::cout << "Sorry! Didn't understand that!" << std::endl;
+      sleep(2);
       continue;
     }
 
@@ -96,24 +96,25 @@ void shop() {
       if (purchase->upgrade()) {
         gold -= cost;
         prepareSaveData();
+        sleep(1);
+        continue;
       }
     } else {
       std::cout << std::endl
                 << "Oops! It looks like you can't afford that!" << std::endl;
+      sleep(2);
+      continue;
     }
-    sleep(2);
   }
 }
 
-void round(bool restarted) {
+void game() {
   std::vector<ApplePickerUpgrade *> upgrades({&applePickers, &wizards});
-  ++roundNum;
   while (true) {
     gold = std::floorf(gold * 100) / 100;
     lifetimeGold = std::floorf(lifetimeGold * 100) / 100;
     prepareSaveData();
     std::cout << "\033[2J\033[H";
-    std::cout << "ROUND " << roundNum << std::endl;
     std::cout << "\033[1;91mApples: " << apples << "\033[0m" << std::endl;
     std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl
               << std::endl;
@@ -121,114 +122,91 @@ void round(bool restarted) {
       std::cout << "\033[1;36mPlatinum: " << platinum << "\033[0m" << std::endl
                 << std::endl;
     }
-    std::cout << "Would you like to pick an apple? (y/n)" << std::endl;
-    std::string ans;
-    std::cin >> ans;
-
-    if (ans == "y") {
-      int pick = 1;
-      for (auto *upgrade : upgrades) {
-        pick += upgrade->pick();
-      }
-      apples += pick;
-      if (pick == 1) {
-        std::cout << "You picked an apple!" << std::endl;
-      } else {
-        std::cout << "You picked " << pick << " apples!" << std::endl;
-      }
-      sleep(1);
-      ++roundNum;
-      continue;
-    } else if (ans == "n") {
-
-    } else if (ans == "s") {
-      shop();
-      continue;
+    
+    if((applePickers.pick() + wizards.pick()) == 0) {
+      std::cout << "1: Pick an apple" << std::endl;
     } else {
-      std::cout << "Sorry! Didn't understand that." << std::endl;
-      sleep(2);
-      continue;
+      std::cout << "1: Pick " << (1 + applePickers.pick() + wizards.pick()) << " apples" << std::endl;
     }
-
+    
+    
     float multiplier =
-        (std::floorf(
-             (int)(((double)(std::rand()) / RAND_MAX / 4 + .25) * 100)) /
-         100) +
-        (platinum / 100.0);
-    if (platinum == 0) {
-      std::cout << "Do you want to sell your apples for " << multiplier
-                << " each? (y/n)" << std::endl;
+      (std::floorf(
+        (int)(((double)(std::rand()) / RAND_MAX / 4 + .25) * 100)) /
+      100) + 
+      (platinum / 100.0);
+
+    if(platinum == 0) {
+      std::cout << "2: Sell " << apples << " apples for " << (multiplier * apples) << " gold" << std::endl;
     } else {
-      std::cout << "Do you want to sell your apples for "
-                << multiplier - (platinum / 100.0) << " + " << platinum / 100.0
-                << " for platinum each? (y/n)" << std::endl;
+      std::cout << "2: Sell " << apples << " apples for " << (multiplier * apples) << " gold, including platinum reward" << std::endl;
     }
+    
+    std::cout << "3: Go to she shop" << std::endl;
+
+    if(platinum > 0 || lifetimeGold >= 1000) {
+      platinumPrestige = lifetimeGold / 100;
+      std::cout << "4: Prestige for " << platinumPrestige << " platinum" << std::endl;
+    }
+
+    std::cout << "Enter a number OR q/Q to quit." << std::endl << std::endl;
+
+    std::string ans;
+
     std::cin >> ans;
 
-    if (ans == "y") {
-      float prevGold = gold;
-      gold += apples * multiplier;
-      lifetimeGold += apples * multiplier;
-      std::cout << "Sold " << apples
-                << ((apples != 1) ? " apples for " : " apple for ")
-                << gold - prevGold << " gold." << std::endl;
+    if(ans == "1") {
+      apples += 1 + applePickers.pick() + wizards.pick();
+      std::cout << "You picked " << applePickers.pick() + wizards.pick() + 1 << ((applePickers.pick() + wizards.pick() > 0) ? " apples!" : " apple!") << std::endl;
+      sleep(1);
+      continue;
+    } else if(ans == "2") {
+      std::cout << "You sold " << apples << ((apples > 1 || apples == 0) ? " apples for " : " apple for") << multiplier * apples << " gold!" << std::endl;
+      gold += multiplier * apples;
+      lifetimeGold += multiplier * apples;
       apples = 0;
       sleep(2);
-      ++roundNum;
       continue;
-    } else if (ans == "n") {
-
-    } else if (ans == "s") {
+    } else if(ans == "3") {
       shop();
       continue;
-    } else {
-      std::cout << "Sorry! Didn't understand that." << std::endl;
-      sleep(2);
-      continue;
-    }
-
-    if (lifetimeGold >= 1500 || platinum > 0) {
-      std::cout << "Would you like to prestige for " << platinumPrestige
-                << " platinum? (y/n)" << std::endl;
-      std::cin >> ans;
-
-      if (ans == "y") {
-        if (prestige()) {
-          apples = 0;
-          gold = 0;
-          lifetimeGold = 0;
-          roundNum = 0;
-          platinum += platinumPrestige;
-          platinumPrestige = 0;
-          applePickers.load(0);
-          wizards.load(0);
+    } else if(ans == "4") {
+      if(platinum > 0 || lifetimeGold >= 1000) {
+        if(prestige()) {
           std::cout << "Prestiging!" << std::endl;
           sleep(3);
+          apples = 0;
+          gold = 0;
+          for(int i = 0; i < upgrades.size(); ++i) {
+            upgrades[i]->load(0);
+          }
+
+          platinum += platinumPrestige;
+          platinumPrestige = 0;
+          lifetimeGold = 0;
+          continue;
+        } else {
           continue;
         }
-      } else if (ans == "n") {
-
       } else {
         std::cout << "Sorry! Didn't understand that!" << std::endl;
         sleep(2);
         continue;
       }
-    }
-
-    std::cout << "Do you want to quit? (y/n)" << std::endl;
-    std::cin >> ans;
-
-    if (ans == "y") {
-      return;
-    } else if (ans == "s") {
-      shop();
+    } else if(ans == "q" || ans == "Q") {
+      prepareSaveData();
+      break;
+    } else {
+      std::cout << "Sorry! Didn't understand that!" << std::endl;
+      sleep(2);
+      continue;
     }
   }
 }
 
 int main(int argc, char **argv) {
-  system("clear");
   std::srand(std::time(nullptr));
+  std::cout << "\033[2J\033[H";
   std::cout << "Hello, there! What is your name?" << std::endl;
   std::cin >> name;
   std::cout << "Hello, " << name << "!" << std::endl;
@@ -273,9 +251,9 @@ int main(int argc, char **argv) {
 
   std::cout << "Let's play!" << std::endl;
   sleep(2);
-  round(false);
+  game();
   std::cout << "Ok. Bye " << name << "!" << std::endl;
   sleep(2); // Don't end immediately.
-  system("clear");
+  std::cout << "\033[2J\033[H";
   return 0;
 }

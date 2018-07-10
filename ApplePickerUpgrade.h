@@ -26,7 +26,7 @@ public:
     return false;
   }
 
-  float cost() { return multiplier_ * (level_ + 1) * .5; }
+  float cost() { return multiplier_ * (level_ + 1) * (level_ + 1); }
 
   int pick() { return multiplier_ * level_; }
 

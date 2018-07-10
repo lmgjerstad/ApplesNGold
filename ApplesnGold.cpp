@@ -20,7 +20,7 @@ public:
   ApplesNGold()
       : apples_(0), gold_(0), platinum_(0), platinum_prestige_(0),
         lifetime_gold_(0) {
-    pickers_.emplace_back("Apple Picker", 1.1, 10, 1);
+    pickers_.emplace_back("Apple Picker", 1.7, 10, 1);
     pickers_.emplace_back("Wizard", 2, 10, 5);
     pickers_.emplace_back("Tractor", 5, 15, 15);
   }
@@ -146,23 +146,35 @@ void ApplesNGold::Shop() {
           if (picker.upgrade()) {
             gold_ -= cost;
             Save();
+            sleep(1);
           }
         } else {
           std::cout << std::endl
                     << "Oops! It looks like you can't afford that!"
                     << std::endl;
+          sleep(2);
         }
       });
     }
 
     if (menu.Execute() == Menu::Result::kQuit) {
-      return;
+      break;
     }
-    sleep(2);
   }
 }
 
 void ApplesNGold::Run() {
+  std::srand(std::time(nullptr));
+  std::cout << "\033[2J\033[H";
+  std::cout << "Hello, there! What is your name?" << std::endl;
+  std::cin >> name_;
+  std::cout << "Hello, " << name_ << "!" << std::endl;
+
+  Load();
+  
+  std::cout << "Let's play!" << std::endl;
+  sleep(2);
+
   while (true) {
     gold_ = std::floorf(gold_ * 100) / 100;
     lifetime_gold_ = std::floorf(lifetime_gold_ * 100) / 100;
@@ -242,10 +254,11 @@ void ApplesNGold::Run() {
 
     if (menu.Execute() == Menu::Result::kQuit) {
       Save();
-      return;
+      break;
     }
     sleep(1);
   }
+
   std::cout << "Ok. Bye " << name_ << "!" << std::endl;
   sleep(2); // Don't end immediately.
   std::cout << "\033[2J\033[H";

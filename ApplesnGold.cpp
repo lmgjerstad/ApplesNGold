@@ -1,13 +1,13 @@
-#include <iostream>
-#include <string>
-#include <unistd.h>
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include <iostream>
 #include <stdlib.h>
+#include <string>
 #include <term.h>
+#include <unistd.h>
 #include <vector>
 
 #include <sys/stat.h>
@@ -23,57 +23,47 @@ int platinum = 0;
 int platinumPrestige = 0;
 float lifetimeGold = 0;
 
-template<typename ... Args>
-std::string string_format( const std::string& format, Args ... args ) {
-    size_t size = snprintf( nullptr, 0, format.c_str(), args ... ) + 1; // Extra space for '\0'
-    std::unique_ptr<char[]> buf( new char[ size ] ); 
-    snprintf( buf.get(), size, format.c_str(), args ... );
-    return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
+template <typename... Args>
+std::string string_format(const std::string &format, Args... args) {
+  size_t size =
+      snprintf(nullptr, 0, format.c_str(), args...) + 1; // Extra space for '\0'
+  std::unique_ptr<char[]> buf(new char[size]);
+  snprintf(buf.get(), size, format.c_str(), args...);
+  return std::string(buf.get(),
+                     buf.get() + size - 1); // We don't want the '\0' inside
 }
 
 class ApplePickerUpgrade {
- public:
-  ApplePickerUpgrade(std::string name, int multiplier, int max) :
-                     name_(std::move(name)),
-                     multiplier_(multiplier),
-                     max_(max),
-                     level_(0) {}
+public:
+  ApplePickerUpgrade(std::string name, int multiplier, int max)
+      : name_(std::move(name)), multiplier_(multiplier), max_(max), level_(0) {}
 
   bool upgrade() {
     if (level_ < max_) {
       ++level_;
-      std::cout << std::endl <<  "You bought a(n) " << name_ << "!" << std::endl;
+      std::cout << std::endl << "You bought a(n) " << name_ << "!" << std::endl;
       return true;
     }
     std::cout << std::endl << "Oops! It is at it's max level!" << std::endl;
     return false;
   }
 
-  float cost() {
-    return multiplier_ * (level_ + 1) * .5;
-  }
+  float cost() { return multiplier_ * (level_ + 1) * .5; }
 
-  int pick() {
-    return multiplier_ * level_;
-  }
+  int pick() { return multiplier_ * level_; }
 
-  int level() {
-    return level_;
-  }
+  int level() { return level_; }
 
-  void load(int level) {
-    level_ = std::min(level, max_);
-  }
-  
-  std::string name() {
-    return name_;
-  }
+  void load(int level) { level_ = std::min(level, max_); }
+
+  std::string name() { return name_; }
 
   std::string StoreLabel() {
-    return string_format("%s - %0.02f Gold - %d/%d", name_.c_str(), cost(), level_, max_);
+    return string_format("%s - %0.02f Gold - %d/%d", name_.c_str(), cost(),
+                         level_, max_);
   }
 
- private:
+private:
   const std::string name_;
   const int multiplier_;
   const int max_;
@@ -87,8 +77,8 @@ void prepareSaveData() {
   std::ofstream out;
   std::string temp = name;
   temp.erase(temp.begin(), std::find_if(temp.begin(), temp.end(), [](int ch) {
-        return !std::isspace(ch);
-    }));
+               return !std::isspace(ch);
+             }));
   filename = temp + ".ang";
   out.open(filename, std::ofstream::out | std::ofstream::trunc);
   out << "apples " << apples << "\n";
@@ -102,13 +92,14 @@ void prepareSaveData() {
 }
 
 bool prestige() {
-  std::cout << "Are you sure you want to prestige for " << platinumPrestige << " platinum? (y/n)" << std::endl;
+  std::cout << "Are you sure you want to prestige for " << platinumPrestige
+            << " platinum? (y/n)" << std::endl;
   std::string ans;
   std::cin >> ans;
 
-  if(ans == "y") {
+  if (ans == "y") {
     return true;
-  } else if(ans == "n") {
+  } else if (ans == "n") {
     return false;
   } else {
     std::cout << "Sorry! Didn't understand that!" << std::endl;
@@ -118,12 +109,13 @@ bool prestige() {
 }
 
 void shop() {
-  std::vector<ApplePickerUpgrade*> options({&applePickers, &wizards});
+  std::vector<ApplePickerUpgrade *> options({&applePickers, &wizards});
   while (true) {
     gold = std::floorf(gold * 100) / 100;
     lifetimeGold = std::floorf(lifetimeGold * 100) / 100;
     std::cout << "\033[2J\033[HSHOP" << std::endl;
-    std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl << std::endl;
+    std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl
+              << std::endl;
 
     for (int i = 0; i < options.size(); ++i) {
       std::cout << i + 1 << ": " << options[i]->StoreLabel() << std::endl;
@@ -142,46 +134,49 @@ void shop() {
       std::cout << "Sorry! Didn't understand that." << std::endl;
       continue;
     }
-    
+
     auto purchase = options[selection - 1];
     const float cost = purchase->cost();
-    if(gold >= cost) {
-      if(purchase->upgrade()) {
+    if (gold >= cost) {
+      if (purchase->upgrade()) {
         gold -= cost;
         prepareSaveData();
       }
     } else {
-      std::cout << std::endl << "Oops! It looks like you can't afford that!" << std::endl;
+      std::cout << std::endl
+                << "Oops! It looks like you can't afford that!" << std::endl;
     }
     sleep(2);
   }
 }
 
 void round(bool restarted) {
-  std::vector<ApplePickerUpgrade*> upgrades({&applePickers, &wizards});
+  std::vector<ApplePickerUpgrade *> upgrades({&applePickers, &wizards});
   ++roundNum;
-  while(true) {
+  while (true) {
     gold = std::floorf(gold * 100) / 100;
     lifetimeGold = std::floorf(lifetimeGold * 100) / 100;
     prepareSaveData();
     std::cout << "\033[2J\033[H";
     std::cout << "ROUND " << roundNum << std::endl;
     std::cout << "\033[1;91mApples: " << apples << "\033[0m" << std::endl;
-    std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl << std::endl;
-    if(platinum > 0) {
-      std::cout << "\033[1;36mPlatinum: " << platinum << "\033[0m"<< std::endl << std::endl;
+    std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl
+              << std::endl;
+    if (platinum > 0) {
+      std::cout << "\033[1;36mPlatinum: " << platinum << "\033[0m" << std::endl
+                << std::endl;
     }
     std::cout << "Would you like to pick an apple? (y/n)" << std::endl;
     std::string ans;
     std::cin >> ans;
-    
-    if(ans == "y") {
+
+    if (ans == "y") {
       int pick = 1;
-      for (auto* upgrade : upgrades) {
+      for (auto *upgrade : upgrades) {
         pick += upgrade->pick();
       }
       apples += pick;
-      if(pick == 1) {
+      if (pick == 1) {
         std::cout << "You picked an apple!" << std::endl;
       } else {
         std::cout << "You picked " << pick << " apples!" << std::endl;
@@ -189,9 +184,9 @@ void round(bool restarted) {
       sleep(1);
       ++roundNum;
       continue;
-    } else if(ans == "n") {
-      
-    } else if(ans == "s") {
+    } else if (ans == "n") {
+
+    } else if (ans == "s") {
       shop();
       continue;
     } else {
@@ -199,27 +194,36 @@ void round(bool restarted) {
       sleep(2);
       continue;
     }
-    
-    float multiplier = (std::floorf((int)(((double)(std::rand()) / RAND_MAX / 4 + .25) * 100)) / 100) + (platinum / 100.0);
-    if(platinum == 0) {
-      std::cout << "Do you want to sell your apples for " << multiplier << " each? (y/n)" << std::endl;
+
+    float multiplier =
+        (std::floorf(
+             (int)(((double)(std::rand()) / RAND_MAX / 4 + .25) * 100)) /
+         100) +
+        (platinum / 100.0);
+    if (platinum == 0) {
+      std::cout << "Do you want to sell your apples for " << multiplier
+                << " each? (y/n)" << std::endl;
     } else {
-      std::cout << "Do you want to sell your apples for " << multiplier - (platinum / 100.0) << " + " << platinum / 100.0 << " for platinum each? (y/n)" << std::endl;
+      std::cout << "Do you want to sell your apples for "
+                << multiplier - (platinum / 100.0) << " + " << platinum / 100.0
+                << " for platinum each? (y/n)" << std::endl;
     }
     std::cin >> ans;
-    
-    if(ans == "y") {
+
+    if (ans == "y") {
       float prevGold = gold;
       gold += apples * multiplier;
       lifetimeGold += apples * multiplier;
-      std::cout << "Sold " << apples << ((apples != 1) ? " apples for " : " apple for ") << gold - prevGold << " gold." << std::endl;
+      std::cout << "Sold " << apples
+                << ((apples != 1) ? " apples for " : " apple for ")
+                << gold - prevGold << " gold." << std::endl;
       apples = 0;
       sleep(2);
       ++roundNum;
       continue;
-    } else if(ans == "n") {
-      
-    } else  if(ans == "s") {
+    } else if (ans == "n") {
+
+    } else if (ans == "s") {
       shop();
       continue;
     } else {
@@ -227,13 +231,14 @@ void round(bool restarted) {
       sleep(2);
       continue;
     }
-    
-    if(lifetimeGold >= 1500 || platinum > 0) {
-      std::cout << "Would you like to prestige for " << platinumPrestige << " platinum? (y/n)" << std::endl;
+
+    if (lifetimeGold >= 1500 || platinum > 0) {
+      std::cout << "Would you like to prestige for " << platinumPrestige
+                << " platinum? (y/n)" << std::endl;
       std::cin >> ans;
 
-      if(ans == "y") {
-        if(prestige()) {
+      if (ans == "y") {
+        if (prestige()) {
           apples = 0;
           gold = 0;
           lifetimeGold = 0;
@@ -246,8 +251,8 @@ void round(bool restarted) {
           sleep(3);
           continue;
         }
-      } else if(ans == "n") {
-        
+      } else if (ans == "n") {
+
       } else {
         std::cout << "Sorry! Didn't understand that!" << std::endl;
         sleep(2);
@@ -257,22 +262,22 @@ void round(bool restarted) {
 
     std::cout << "Do you want to quit? (y/n)" << std::endl;
     std::cin >> ans;
-    
-    if(ans == "y") {
+
+    if (ans == "y") {
       return;
-    } else if(ans == "s") {
+    } else if (ans == "s") {
       shop();
     }
   }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   system("clear");
   std::srand(std::time(nullptr));
   std::cout << "Hello, there! What is your name?" << std::endl;
   std::cin >> name;
   std::cout << "Hello, " << name << "!" << std::endl;
-  
+
   std::ifstream in;
   std::string temp = name;
   std::string::iterator buf = std::remove(temp.begin(), temp.end(), ' ');
@@ -282,27 +287,27 @@ int main(int argc, char** argv) {
 
   std::string stat;
   float value;
-  
-  while(in >> stat >> value) {
+
+  while (in >> stat >> value) {
     try {
-      if(stat == "apples") {
+      if (stat == "apples") {
         apples = value;
-      } else if(stat == "gold") {
+      } else if (stat == "gold") {
         gold = value;
-      } else if(stat == "lifetimeGold") {
+      } else if (stat == "lifetimeGold") {
         lifetimeGold = value;
-      } else if(stat == "platinum") {
+      } else if (stat == "platinum") {
         platinum = value;
-      } else if(stat == "platinumGain") {
+      } else if (stat == "platinumGain") {
         platinumPrestige = value;
-      } else if(stat == "applePickers") {
+      } else if (stat == "applePickers") {
         applePickers.load(value);
-      } else if(stat == "wizards") {
+      } else if (stat == "wizards") {
         wizards.load(value);
       } else {
         throw 1; // Activate catch statement
       }
-    } catch(...) {
+    } catch (...) {
       std::cout << "The save file \"" << filename << "\" is corrupted.";
       sleep(2);
       return 1;
@@ -310,7 +315,7 @@ int main(int argc, char** argv) {
   }
 
   in.close();
-  
+
   std::cout << "Let's play!" << std::endl;
   sleep(2);
   round(false);

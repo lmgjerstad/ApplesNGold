@@ -72,6 +72,10 @@ class ApplePickerUpgrade {
   void load(int level) {
     level_ = std::min(level, max_);
   }
+  
+  std::string name() {
+    return name_;
+  }
 
   std::string StoreLabel() {
     return string_format("%s - %0.02f Gold - %d/%d", name_.c_str(), cost(), level_, max_);
@@ -140,6 +144,7 @@ void shop() {
         gold -= cost;
         std::cout << std::endl <<  "You bought an apple picker!" << std::endl;
         sleep(1);
+        prepareSaveData();
         shop();
         return;
       } else {
@@ -149,6 +154,7 @@ void shop() {
     } else {
       std::cout << std::endl << "Oops! It looks like you can't afford that!" << std::endl;
       sleep(2);
+      prepareSaveData();
       shop();
       return;
     }
@@ -159,6 +165,7 @@ void shop() {
         gold -= cost;
         std::cout << std::endl <<  "You bought a wizard!" << std::endl;
         sleep(1);
+        prepareSaveData();
         shop();
         return;
       } else {
@@ -168,10 +175,11 @@ void shop() {
     } else {
       std::cout << std::endl << "Oops! It looks like you can't afford that!" << std::endl;
       sleep(2);
+      prepareSaveData();
       shop();
       return;
     }
-  } else if(ans == "q") {
+  } else if(ans == "q" || ans == "Q") {
       prepareSaveData();
       return;
   } else {
@@ -227,11 +235,11 @@ void round(bool restarted) {
     return;
   }
   
-  float multiplier = (std::floorf((int)(((double)(std::rand()) / RAND_MAX / 4 + .25) * 100)) / 100) + (platinum / 100);
+  float multiplier = (std::floorf((int)(((double)(std::rand()) / RAND_MAX / 4 + .25) * 100)) / 100) + (platinum / 100.0);
   if(platinum == 0) {
     std::cout << "Do you want to sell your apples for " << multiplier << " each? (y/n)" << std::endl;
   } else {
-    std::cout << "Do you want to sell your apples for " << multiplier - (platinum / 100) << " + " << platinum / 100.0 << " for platinum each? (y/n)" << std::endl;
+    std::cout << "Do you want to sell your apples for " << multiplier - (platinum / 100.0) << " + " << platinum / 100.0 << " for platinum each? (y/n)" << std::endl;
   }
   std::cin >> ans;
   
@@ -270,6 +278,8 @@ void round(bool restarted) {
         roundNum = 0;
         platinum += platinumPrestige;
         platinumPrestige = 0;
+        applePickers.load(0);
+        wizards.load(0);
         std::cout << "Prestiging!" << std::endl;
         sleep(3);
         round(false);
@@ -344,7 +354,7 @@ int main(int argc, char** argv) {
     } catch(...) {
       std::cout << "The save file \"" << filename << "\" is corrupted.";
       sleep(2);
-      return 0;
+      return 1;
     }
   }
 
@@ -354,6 +364,7 @@ int main(int argc, char** argv) {
   sleep(2);
   round(false);
   std::cout << "Ok. Bye " << name << "!" << std::endl;
+  sleep(2); // Don't end immediately.
   system("clear");
   return 0;
 }

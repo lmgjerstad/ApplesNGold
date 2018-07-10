@@ -26,6 +26,7 @@ float lifetimeGold = 0;
 
 ApplePickerUpgrade applePickers("Apple Picker", 1, 10);
 ApplePickerUpgrade wizards("Wizard", 2, 10);
+ApplePickerUpgrade tractors("Tractor", 5, 15);
 
 void prepareSaveData() {
   std::ofstream out;
@@ -41,7 +42,8 @@ void prepareSaveData() {
   out << "platinum " << platinum << "\n";
   out << "platinumGain " << platinumPrestige << "\n\n";
   out << "applePickers " << applePickers.level() << "\n";
-  out << "wizards " << wizards.level();
+  out << "wizards " << wizards.level() << "\n";
+  out << "tractors " << tractors.level() << "\n";
   out.close();
 }
 
@@ -63,7 +65,7 @@ bool prestige() {
 }
 
 void shop() {
-  std::vector<ApplePickerUpgrade *> options({&applePickers, &wizards});
+  std::vector<ApplePickerUpgrade *> options({&applePickers, &wizards, &tractors});
   while (true) {
     gold = std::floorf(gold * 100) / 100;
     lifetimeGold = std::floorf(lifetimeGold * 100) / 100;
@@ -109,7 +111,7 @@ void shop() {
 }
 
 void game() {
-  std::vector<ApplePickerUpgrade *> upgrades({&applePickers, &wizards});
+  std::vector<ApplePickerUpgrade *> upgrades({&applePickers, &wizards, &tractors});
   while (true) {
     gold = std::floorf(gold * 100) / 100;
     lifetimeGold = std::floorf(lifetimeGold * 100) / 100;
@@ -237,12 +239,15 @@ int main(int argc, char **argv) {
         applePickers.load(value);
       } else if (stat == "wizards") {
         wizards.load(value);
+      } else if(stat == "tractors") {
+        tractors.load(value);
       } else {
         throw 1; // Activate catch statement
       }
     } catch (...) {
-      std::cout << "The save file \"" << filename << "\" is corrupted.";
+      std::cout << "The save file \"" << filename << "\" is corrupted." << std::endl;
       sleep(2);
+      std::cout << "\033[2J\033[H";
       return 1;
     }
   }

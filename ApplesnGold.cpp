@@ -15,41 +15,106 @@
 #include "ApplePickerUpgrade.h"
 #include "menu.h"
 
-std::string name;
-std::string filename;
-int apples = 0;
-float gold = 0;
+class ApplesNGold {
+public:
+  ApplesNGold()
+      : apples_(0), gold_(0), platinum_(0), platinum_prestige_(0),
+        lifetime_gold_(0) {
+    pickers_.emplace_back("Apple Picker", 1.1, 10, 1);
+    pickers_.emplace_back("Wizard", 2, 10, 5);
+    pickers_.emplace_back("Tractor", 5, 15, 15);
+  }
 
-// Prestige mechanics
-int platinum = 0;
-int platinumPrestige = 0;
-float lifetimeGold = 0;
+  void Run();
 
-ApplePickerUpgrade applePickers("Apple Picker", 1.1, 10, 1);
-ApplePickerUpgrade wizards("Wizard", 2, 10, 5);
-ApplePickerUpgrade tractors("Tractor", 5, 15, 15);
+private:
+  void Save();
 
-void prepareSaveData() {
+  void Load();
+
+  const std::string &SaveFile();
+
+  bool Prestige();
+
+  void Shop();
+
+  std::string name_;
+  std::string filename_;
+  int apples_;
+  float gold_;
+  int platinum_;
+  int platinum_prestige_;
+  float lifetime_gold_;
+  std::vector<ApplePickerUpgrade> pickers_;
+};
+
+const std::string &ApplesNGold::SaveFile() {
+  if (filename_.empty()) {
+    std::string temp = name_;
+    temp.erase(temp.begin(), std::find_if(temp.begin(), temp.end(), [](int ch) {
+                 return !std::isspace(ch);
+               }));
+    filename_ = temp + ".ang";
+  }
+  return filename_;
+}
+
+void ApplesNGold::Save() {
   std::ofstream out;
-  std::string temp = name;
-  temp.erase(temp.begin(), std::find_if(temp.begin(), temp.end(), [](int ch) {
-               return !std::isspace(ch);
-             }));
-  filename = temp + ".ang";
-  out.open(filename, std::ofstream::out | std::ofstream::trunc);
-  out << "apples " << apples << "\n";
-  out << "gold " << gold << "\n";
-  out << "lifetimeGold " << lifetimeGold << "\n";
-  out << "platinum " << platinum << "\n";
-  out << "platinumGain " << platinumPrestige << "\n\n";
-  out << "applePickers " << applePickers.level() << "\n";
-  out << "wizards " << wizards.level() << "\n";
-  out << "tractors " << tractors.level() << "\n";
+  out.open(SaveFile(), std::ofstream::out | std::ofstream::trunc);
+  out << "apples " << apples_ << "\n";
+  out << "gold " << gold_ << "\n";
+  out << "lifetimeGold " << lifetime_gold_ << "\n";
+  out << "platinum " << platinum_ << "\n";
+  out << "platinumGain " << platinum_prestige_ << "\n\n";
+  out << "applePickers " << pickers_[0].level() << "\n";
+  out << "wizards " << pickers_[1].level() << "\n";
+  out << "tractors " << pickers_[2].level() << "\n";
   out.close();
 }
 
-bool prestige() {
-  std::cout << "Are you sure you want to prestige for " << platinumPrestige
+void ApplesNGold::Load() {
+  std::ifstream in;
+  in.open(SaveFile());
+
+  std::string stat;
+  float value;
+
+  while (in >> stat >> value) {
+    try {
+      if (stat == "apples") {
+        apples_ = value;
+      } else if (stat == "gold") {
+        gold_ = value;
+      } else if (stat == "lifetimeGold") {
+        lifetime_gold_ = value;
+      } else if (stat == "platinum") {
+        platinum_ = value;
+      } else if (stat == "platinumGain") {
+        platinum_prestige_ = value;
+      } else if (stat == "applePickers") {
+        pickers_[0].load(value);
+      } else if (stat == "wizards") {
+        pickers_[1].load(value);
+      } else if (stat == "tractors") {
+        pickers_[2].load(value);
+      } else {
+        throw 1; // Activate catch statement
+      }
+    } catch (...) {
+      std::cout << "The save file \"" << filename_ << "\" is corrupted."
+                << std::endl;
+      sleep(2);
+      std::cout << "\033[2J\033[H";
+      exit(1);
+    }
+  }
+
+  in.close();
+}
+
+bool ApplesNGold::Prestige() {
+  std::cout << "Are you sure you want to prestige for " << platinum_prestige_
             << " platinum? (y/n)" << std::endl;
   std::string ans;
   std::cin >> ans;
@@ -65,29 +130,29 @@ bool prestige() {
   }
 }
 
-void shop() {
-  std::vector<ApplePickerUpgrade *> options({&applePickers, &wizards, &tractors});
+void ApplesNGold::Shop() {
   while (true) {
-    gold = std::floorf(gold * 100) / 100;
-    lifetimeGold = std::floorf(lifetimeGold * 100) / 100;
+    gold_ = std::floorf(gold_ * 100) / 100;
+    lifetime_gold_ = std::floorf(lifetime_gold_ * 100) / 100;
     std::cout << "\033[2J\033[HSHOP" << std::endl;
-    std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl
+    std::cout << "\033[1;93mGold: " << gold_ << "\033[0m" << std::endl
               << std::endl;
 
     Menu menu;
-    for (auto* picker : options) {
-      menu.AddOption(picker->StoreLabel(), [picker]() {
-          const float cost = picker->cost();
-          if (gold > cost) {
-            if (picker->upgrade()) {
-              gold -= cost;
-              prepareSaveData();
-            }
-          } else {
-            std::cout << std::endl
-                      << "Oops! It looks like you can't afford that!" << std::endl;
+    for (auto &picker : pickers_) {
+      menu.AddOption(picker.StoreLabel(), [this, &picker]() {
+        const float cost = picker.cost();
+        if (gold_ > cost) {
+          if (picker.upgrade()) {
+            gold_ -= cost;
+            Save();
           }
-          });
+        } else {
+          std::cout << std::endl
+                    << "Oops! It looks like you can't afford that!"
+                    << std::endl;
+        }
+      });
     }
 
     if (menu.Execute() == Menu::Result::kQuit) {
@@ -97,35 +162,33 @@ void shop() {
   }
 }
 
-void game() {
-  std::vector<ApplePickerUpgrade *> upgrades(
-      {&applePickers, &wizards, &tractors});
+void ApplesNGold::Run() {
   while (true) {
-    gold = std::floorf(gold * 100) / 100;
-    lifetimeGold = std::floorf(lifetimeGold * 100) / 100;
-    prepareSaveData();
+    gold_ = std::floorf(gold_ * 100) / 100;
+    lifetime_gold_ = std::floorf(lifetime_gold_ * 100) / 100;
+    Save();
     std::cout << "\033[2J\033[H";
-    std::cout << "\033[1;91mApples: " << apples << "\033[0m" << std::endl;
-    std::cout << "\033[1;93mGold: " << gold << "\033[0m" << std::endl
+    std::cout << "\033[1;91mApples: " << apples_ << "\033[0m" << std::endl;
+    std::cout << "\033[1;93mGold: " << gold_ << "\033[0m" << std::endl
               << std::endl;
-    if (platinum > 0) {
-      std::cout << "\033[1;96mPlatinum: " << platinum << "\033[0m" << std::endl
+    if (platinum_ > 0) {
+      std::cout << "\033[1;96mPlatinum: " << platinum_ << "\033[0m" << std::endl
                 << std::endl;
     }
 
     Menu menu;
     std::string pick_text;
     int pick_qty = 1;
-    for (auto *picker : upgrades) {
-      pick_qty += picker->pick();
+    for (auto &picker : pickers_) {
+      pick_qty += picker.pick();
     }
     if (pick_qty == 1) {
       pick_text = "Pick an apple";
     } else {
       pick_text = string_format("Pick %d apples", pick_qty);
     }
-    menu.AddOption(std::move(pick_text), [pick_qty]() {
-      apples += pick_qty;
+    menu.AddOption(std::move(pick_text), [this, pick_qty]() {
+      apples_ += pick_qty;
       std::cout << "You picked " << pick_qty
                 << (pick_qty > 1 ? " apples!" : " apple!") << std::endl;
     });
@@ -134,109 +197,62 @@ void game() {
         (std::floorf(
              (int)(((double)(std::rand()) / RAND_MAX / 4 + .25) * 100)) /
          100) +
-        (platinum / 100.0);
+        (platinum_ / 100.0);
 
     std::string sell_text;
-    if (platinum == 0) {
-      sell_text = string_format("Sell %d apples for %0.02f gold", apples,
-                                (multiplier * apples));
+    if (platinum_ == 0) {
+      sell_text = string_format("Sell %d apples for %0.02f gold", apples_,
+                                (multiplier * apples_));
     } else {
       sell_text = string_format(
-          "Sell %d apples for %0.02f gold, including platinum reward", apples,
-          (multiplier * apples));
+          "Sell %d apples for %0.02f gold, including platinum reward", apples_,
+          (multiplier * apples_));
     }
-    menu.AddOption(std::move(sell_text), [multiplier]() {
-      std::cout << "You sold " << apples
-                << ((apples > 1 || apples == 0) ? " apples for " : " apple for")
-                << multiplier * apples << " gold!" << std::endl;
-      gold += multiplier * apples;
-      lifetimeGold += multiplier * apples;
-      apples = 0;
+    menu.AddOption(std::move(sell_text), [this, multiplier]() {
+      std::cout << "You sold " << apples_
+                << ((apples_ > 1 || apples_ == 0) ? " apples for "
+                                                  : " apple for")
+                << multiplier * apples_ << " gold!" << std::endl;
+      gold_ += multiplier * apples_;
+      lifetime_gold_ += multiplier * apples_;
+      apples_ = 0;
     });
 
-    menu.AddOption("Go to the shop", []() { shop(); });
+    menu.AddOption("Go to the shop", [this]() { Shop(); });
 
-    if (platinum > 0 || lifetimeGold >= 1000) {
-      platinumPrestige = lifetimeGold / 100;
+    if (platinum_ > 0 || lifetime_gold_ >= 1000) {
+      platinum_prestige_ = lifetime_gold_ / 100;
       menu.AddOption(
-          string_format("Prestige for %d platinum", platinumPrestige),
-          [&upgrades]() {
-            if (prestige()) {
+          string_format("Prestige for %d platinum", platinum_prestige_),
+          [this]() {
+            if (Prestige()) {
               std::cout << "Prestiging!" << std::endl;
-              apples = 0;
-              gold = 0;
-              for (int i = 0; i < upgrades.size(); ++i) {
-                upgrades[i]->load(0);
+              apples_ = 0;
+              gold_ = 0;
+              for (auto &picker : pickers_) {
+                picker.load(0);
               }
 
-              platinum += platinumPrestige;
-              platinumPrestige = 0;
-              lifetimeGold = 0;
+              platinum_ += platinum_prestige_;
+              platinum_prestige_ = 0;
+              lifetime_gold_ = 0;
             }
           });
     }
 
     if (menu.Execute() == Menu::Result::kQuit) {
-      prepareSaveData();
+      Save();
       return;
     }
     sleep(1);
   }
+  std::cout << "Ok. Bye " << name_ << "!" << std::endl;
+  sleep(2); // Don't end immediately.
+  std::cout << "\033[2J\033[H";
 }
 
 int main(int argc, char **argv) {
-  std::srand(std::time(nullptr));
-  std::cout << "\033[2J\033[H";
-  std::cout << "Hello, there! What is your name?" << std::endl;
-  std::cin >> name;
-  std::cout << "Hello, " << name << "!" << std::endl;
-
-  std::ifstream in;
-  std::string temp = name;
-  std::string::iterator buf = std::remove(temp.begin(), temp.end(), ' ');
-  temp.erase(buf, temp.end());
-  filename = temp + ".ang";
-  in.open(filename);
-
-  std::string stat;
-  float value;
-
-  while (in >> stat >> value) {
-    try {
-      if (stat == "apples") {
-        apples = value;
-      } else if (stat == "gold") {
-        gold = value;
-      } else if (stat == "lifetimeGold") {
-        lifetimeGold = value;
-      } else if (stat == "platinum") {
-        platinum = value;
-      } else if (stat == "platinumGain") {
-        platinumPrestige = value;
-      } else if (stat == "applePickers") {
-        applePickers.load(value);
-      } else if (stat == "wizards") {
-        wizards.load(value);
-      } else if(stat == "tractors") {
-        tractors.load(value);
-      } else {
-        throw 1; // Activate catch statement
-      }
-    } catch (...) {
-      std::cout << "The save file \"" << filename << "\" is corrupted." << std::endl;
-      sleep(2);
-      std::cout << "\033[2J\033[H";
-      return 1;
-    }
-  }
-
-  in.close();
-
-  std::cout << "Let's play!" << std::endl;
-  sleep(2);
-  game();
-  std::cout << "Ok. Bye " << name << "!" << std::endl;
-  sleep(2); // Don't end immediately.
-  std::cout << "\033[2J\033[H";
+  ApplesNGold game;
+  game.Run();
   return 0;
 }

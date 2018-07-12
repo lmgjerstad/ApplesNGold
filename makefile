@@ -6,7 +6,7 @@ all: ApplesnGold
 ApplesnGold: applesngold.o menu.o
 	g++ -o ApplesnGold applesngold.o menu.o
 
-applesngold.o: ApplesnGold.cpp ApplePickerUpgrade.h menu.h
+applesngold.o: ApplesnGold.cpp ApplePickerUpgrade.h MagicPotion.h menu.h
 	$(CC) -c -o applesngold.o $(CFLAGS) ApplesnGold.cpp
 
 menu.o: menu.cpp menu.h

@@ -2,6 +2,7 @@
 #define __APPLEPICKERUPGRADE_H_INCLUDED__
 
 #include <cmath>
+#include <string>
 
 template <typename... Args>
 std::string string_format(const std::string &format, Args... args) {

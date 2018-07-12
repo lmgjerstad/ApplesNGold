@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 
 #include "ApplePickerUpgrade.h"
+#include "MagicPotion.h"
 #include "menu.h"
 
 class ApplesNGold {
@@ -23,10 +24,13 @@ public:
     pickers_.emplace_back("Apple Picker", 1.7, 10, 1);
     pickers_.emplace_back("Wizard", 2, 10, 5);
     pickers_.emplace_back("Tractor", 5, 15, 15);
+
+    potions_.emplace_back("Red Potion", MagicPotion::Type::kApples, 10, 50, 400, "\033[1;91m");
+    potions_.emplace_back("Yellow Potion", MagicPotion::Type::kGold, 15, 50, 400, "\033[1;93m");
+    potions_.emplace_back("Blue Potion", MagicPotion::Type::kPlatinum, 1, 500, 15000, "\033[1;96m");
   }
 
   void Run();
-
 private:
   void Save();
 
@@ -46,6 +50,7 @@ private:
   int platinum_prestige_;
   float lifetime_gold_;
   std::vector<ApplePickerUpgrade> pickers_;
+  std::vector<MagicPotion> potions_;
 };
 
 const std::string &ApplesNGold::SaveFile() {
@@ -142,19 +147,43 @@ void ApplesNGold::Shop() {
     for (auto &picker : pickers_) {
       menu.AddOption(picker.StoreLabel(), [this, &picker]() {
         const float cost = picker.cost();
-        if (gold_ > cost) {
+        if (gold_ >= cost) {
           if (picker.upgrade()) {
             gold_ -= cost;
             Save();
             sleep(1);
           }
         } else {
-          std::cout << std::endl
-                    << "Oops! It looks like you can't afford that!"
+          std::cout << "Oops! It looks like you can't afford that!"
                     << std::endl;
           sleep(2);
         }
       });
+    }
+    if(platinum_ > 0) {
+      menu.BlankLine();
+  
+      for (auto &potion : potions_) {
+        menu.AddOption(potion.StoreLabel(), [this, &potion]() {
+          const float cost = potion.cost();
+          if (gold_ >= cost && potion.type() != MagicPotion::Type::kGold) {
+            potion.setRoundNum(0);
+            std::cout << "You bought a(n) " << potion.name() << "!" << std::endl;
+            gold_ -= cost;
+            Save();
+            sleep(1);
+          } else if(potion.type() == MagicPotion::Type::kGold && apples_ >= cost) {
+            potion.setRoundNum(0);
+            std::cout << "You bought a(n) " << potion.name() << "!" << std::endl;
+            apples_ -= cost;
+            Save();
+            sleep(1);
+          } else {
+            std::cout << "Oops! It looks like you can't afford that!" << std::endl;
+            sleep(2);
+          }
+        });
+      }
     }
 
     if (menu.Execute() == Menu::Result::kQuit) {
@@ -179,6 +208,23 @@ void ApplesNGold::Run() {
     gold_ = std::floorf(gold_ * 100) / 100;
     lifetime_gold_ = std::floorf(lifetime_gold_ * 100) / 100;
     Save();
+    
+    for(auto &potion : potions_) {
+      if(potion.active()) {
+        if(!potion.loop()) {
+          if(potion.type() == MagicPotion::Type::kApples) {
+            apples_ += potion.multiplier();
+          } else if(potion.type() == MagicPotion::Type::kGold) {
+            gold_ += potion.multiplier();
+          } else {
+            platinum_ += potion.multiplier();
+          }
+        }
+      } else {
+        potion.setRoundNum(0);
+      }
+    }
+
     std::cout << "\033[2J\033[H";
     std::cout << "\033[1;91mApples: " << apples_ << "\033[0m" << std::endl;
     std::cout << "\033[1;93mGold: " << gold_ << "\033[0m" << std::endl
@@ -213,12 +259,12 @@ void ApplesNGold::Run() {
 
     std::string sell_text;
     if (platinum_ == 0) {
-      sell_text = string_format("Sell %d apples for %0.02f gold", apples_,
-                                (multiplier * apples_));
+      sell_text = string_format("Sell %d apples for %0.02f gold each", apples_,
+                                (multiplier));
     } else {
       sell_text = string_format(
-          "Sell %d apples for %0.02f gold, including platinum reward", apples_,
-          (multiplier * apples_));
+          "Sell %d apples for %0.02f + %0.02f gold each", apples_,
+          (multiplier - (platinum_ / 100.0)), platinum_ / 100.0);
     }
     menu.AddOption(std::move(sell_text), [this, multiplier]() {
       std::cout << "You sold " << apples_

@@ -4,12 +4,22 @@
 #include "menu.h"
 
 void Menu::AddOption(std::string text, std::function<void()> callback) {
-  options_.push_back({std::move(text), std::move(callback)});
+  std::unique_ptr<Option> option(new Option);
+  option->text = std::move(text);
+  option->callback = std::move(callback);
+  display_options_.push_back(option.get());
+  options_.push_back(std::move(option));
 }
 
 Menu::Result Menu::Execute() {
-  for (int i = 0; i < options_.size(); ++i) {
-    std::cout << i + 1 << ": " << options_[i].text << std::endl;
+  int i = 1;
+  for (const auto* option : display_options_) {
+    if (option == nullptr) {
+      std::cout << std::endl;
+    } else {
+      std::cout << i << ": " << option->text << std::endl;
+      ++i;
+    }
   }
   std::cout << "Enter a number OR enter q/Q." << std::endl << std::endl;
   std::string ans;
@@ -25,6 +35,10 @@ Menu::Result Menu::Execute() {
     return Result::kNoAction;
   }
 
-  options_[selection - 1].callback();
+  options_[selection - 1]->callback();
   return Result::kAction;
+}
+
+void Menu::BlankLine() {
+  display_options_.emplace_back(nullptr);
 }

@@ -10,6 +10,8 @@ class Menu {
    Menu() {}
 
    void AddOption(std::string text, std::function<void()> callback);
+   
+   void BlankLine();
 
    enum class Result { kQuit, kNoAction, kAction };
 
@@ -20,7 +22,8 @@ class Menu {
      std::function<void()> callback;
    };
 
-   std::vector<Option> options_;
+   std::vector<std::unique_ptr<Option>> options_;
+   std::vector<Option *> display_options_;
 };
 
 #endif  // __MENU_H_INCLUDED__

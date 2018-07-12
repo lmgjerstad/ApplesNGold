@@ -28,7 +28,7 @@ public:
   float multiplier() { return multiplier_; }
 
   bool loop() {
-    if(roundNum_ < duration_ && roundNum_ != 0) {
+    if(roundNum_ <= duration_ && roundNum_ != 0) {
       ++roundNum_;
       return false;
     } else if(roundNum_ == 0) {
@@ -58,7 +58,7 @@ public:
   }
 
   bool active() {
-    if(roundNum_ < duration() && roundNum_ != 0) {
+    if(roundNum_ <= duration() && roundNum_ != 0) {
       return true;
     } else {
       return false;

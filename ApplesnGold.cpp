@@ -167,13 +167,13 @@ void ApplesNGold::Shop() {
         menu.AddOption(potion.StoreLabel(), [this, &potion]() {
           const float cost = potion.cost();
           if (gold_ >= cost && potion.type() != MagicPotion::Type::kGold) {
-            potion.setRoundNum(0);
+            potion.setRoundNum(1);
             std::cout << "You bought a(n) " << potion.name() << "!" << std::endl;
             gold_ -= cost;
             Save();
             sleep(1);
           } else if(potion.type() == MagicPotion::Type::kGold && apples_ >= cost) {
-            potion.setRoundNum(0);
+            potion.setRoundNum(1);
             std::cout << "You bought a(n) " << potion.name() << "!" << std::endl;
             apples_ -= cost;
             Save();

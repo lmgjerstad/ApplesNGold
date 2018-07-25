@@ -15,6 +15,7 @@
 #include "ApplePickerUpgrade.h"
 #include "MagicPotion.h"
 #include "menu.h"
+#include "absl/strings/str_format.h"
 
 class ApplesNGold {
 public:
@@ -243,7 +244,7 @@ void ApplesNGold::Run() {
     if (pick_qty == 1) {
       pick_text = "Pick an apple";
     } else {
-      pick_text = string_format("Pick %d apples", pick_qty);
+      pick_text = absl::StrFormat("Pick %d apples", pick_qty);
     }
     menu.AddOption(std::move(pick_text), [this, pick_qty]() {
       apples_ += pick_qty;
@@ -259,10 +260,10 @@ void ApplesNGold::Run() {
 
     std::string sell_text;
     if (platinum_ == 0) {
-      sell_text = string_format("Sell %d apples for %0.02f gold each", apples_,
+      sell_text = absl::StrFormat("Sell %d apples for %0.02f gold each", apples_,
                                 (multiplier));
     } else {
-      sell_text = string_format(
+      sell_text = absl::StrFormat(
           "Sell %d apples for %0.02f + %0.02f gold each", apples_,
           (multiplier - (platinum_ / 100.0)), platinum_ / 100.0);
     }
@@ -281,7 +282,7 @@ void ApplesNGold::Run() {
     if (platinum_ > 0 || lifetime_gold_ >= 1000) {
       platinum_prestige_ = lifetime_gold_ / 100;
       menu.AddOption(
-          string_format("Prestige for %d platinum", platinum_prestige_),
+          absl::StrFormat("Prestige for %d platinum", platinum_prestige_),
           [this]() {
             if (Prestige()) {
               std::cout << "Prestiging!" << std::endl;

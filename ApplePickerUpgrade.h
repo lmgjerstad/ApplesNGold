@@ -4,20 +4,14 @@
 #include <cmath>
 #include <string>
 
-template <typename... Args>
-std::string string_format(const std::string &format, Args... args) {
-  size_t size =
-      snprintf(nullptr, 0, format.c_str(), args...) + 1; // Extra space for '\0'
-  std::unique_ptr<char[]> buf(new char[size]);
-  snprintf(buf.get(), size, format.c_str(), args...);
-  return std::string(buf.get(),
-                     buf.get() + size - 1); // We don't want the '\0' inside
-}
+#include "absl/strings/str_format.h"
 
 class ApplePickerUpgrade {
 public:
-  ApplePickerUpgrade(std::string name, float multiplier, int max, float base_price)
-      : name_(std::move(name)), multiplier_(multiplier), max_(max), base_price_(base_price), level_(0) {}
+  ApplePickerUpgrade(std::string name, float multiplier, int max,
+                     float base_price)
+      : name_(std::move(name)), multiplier_(multiplier), max_(max),
+        base_price_(base_price), level_(0) {}
 
   bool upgrade() {
     if (level_ < max_) {
@@ -40,14 +34,14 @@ public:
   std::string name() { return name_; }
 
   std::string StoreLabel() {
-    return string_format("%s - %0.02f Gold - %d/%d", name_.c_str(), cost(),
-                         level_, max_);
+    return absl::StrFormat("%s - %0.02f Gold - %d/%d", name_.c_str(), cost(),
+                           level_, max_);
   }
 
 private:
   const std::string name_;
   const float multiplier_;
-  const int max_; 
+  const int max_;
   float base_price_;
   int level_;
 };

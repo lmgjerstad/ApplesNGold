@@ -21,6 +21,14 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "idle_picker",
+    hdrs = ["IdlePicker.h"],
+    deps = [
+        "@com_google_absl//absl/strings:str_format",
+    ],
+)
+
 cc_binary(
     name = "ApplesnGold",
     srcs = ["ApplesnGold.cpp"],
@@ -28,6 +36,7 @@ cc_binary(
         ":menu",
         ":magic_potion",
         ":apple_picker_upgrade",
+        ":idle_picker",
         "@com_google_absl//absl/strings:str_format",
     ],
 )

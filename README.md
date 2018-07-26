@@ -2,7 +2,7 @@
 
 Apples'n'Gold is a simple console computer game written by Adrian Gjerstad and Lance Gjerstad. This game has many fun aspects to it, and is being built on day after day. For example, a shop, prestiging, trades, and many more things! Here on GitHub, you are able to view the code that makes it possible! This game is originally by [CodeDojo](https://github.com/CodeDojoOfficial), and it grows alongside it. Adrian is a part of CodeDojo, so no copyright infringement is made.
 
-# Help (v1.0.0)
+# Help (v1.0.1)
 
 When you start, you will see a prompt asking you for your name. Whatever name you enter will be the name of the save file that it creates, so make sure you enter the same thing every time. Now, let's play!
 
@@ -40,11 +40,26 @@ Platinum: 0
 
 Platinum gives you a +0.01 gold per sale of apples. So if you have 50, it is possible to get 1 full gold for an apple!
 
+Once you get the platinum ability, you will notice three potions! Hence the nickname: The Potion Update. The list of potions and their effects are below:
+
+- Red Potion: Costs 400 Gold, works for 10 rounds giving you 50 apples each.
+- Yellow Potion: Costs 400 **Apples**, works for 15 rounds, giving you 50 gold each.
+- Blue Potion: Costs 15,000 Gold, gives you 500 platinum.
+
+As you may have noticed by now, the potions are stackable, meaning you can use them in large quantities. If you quit while they are active, though, you will lose out. We are working on this, and it may come out in the next snapshot, but it will not be in 1.0.1.
+
 &nbsp;
 
 If it gets to the point where it becomes boring, go ahead and contribute here at GitHub by asking for new features!
 
 # Changelog
+
+## 07-26-2018: v1.0.1
+
+- Added potions
+- Changed save file storage locations. (look [here](https://github.com/lmgjerstad/ApplesNGold/wiki/Move_Saves "Wiki: Move Saves").)
+- Added self pickers to the shop.
+- Bug fixes.
 
 ## 07-10-2018: v1.0.0
 

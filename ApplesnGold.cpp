@@ -9,8 +9,6 @@
 #include <term.h>
 #include <unistd.h>
 #include <vector>
-#include <limits>
-#include <ios>
 
 #include <sys/stat.h>
 
@@ -55,6 +53,8 @@ private:
   float lifetime_gold_;
   std::vector<ApplePickerUpgrade> pickers_;
   std::vector<MagicPotion> potions_;
+
+  const char* ROOT = getenv("HOME");
 };
 
 const std::string &ApplesNGold::SaveFile() {
@@ -63,7 +63,13 @@ const std::string &ApplesNGold::SaveFile() {
     temp.erase(temp.begin(), std::find_if(temp.begin(), temp.end(), [](int ch) {
                  return !std::isspace(ch);
                }));
-    filename_ = temp + ".ang";
+    
+    filename_ = absl::StrFormat("%s/ApplesnGold/%s.ang", ROOT, temp.c_str());
+
+    std::ifstream file(filename_.c_str());
+    if(!file.good()) {
+      system("mkdir -p ~/ApplesnGold");
+    }
   }
   return filename_;
 }

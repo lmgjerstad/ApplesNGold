@@ -1,0 +1,570 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		12F77FA9210A624800200369 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12F77FA8210A624800200369 /* AppDelegate.swift */; };
+		12F77FAB210A624900200369 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 12F77FAA210A624900200369 /* Assets.xcassets */; };
+		12F77FAE210A624900200369 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12F77FAC210A624900200369 /* MainMenu.xib */; };
+		12F77FBA210A624A00200369 /* Apples__n__GoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12F77FB9210A624A00200369 /* Apples__n__GoldTests.swift */; };
+		12F77FC5210A624A00200369 /* Apples__n__GoldUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12F77FC4210A624A00200369 /* Apples__n__GoldUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		12F77FB6210A624A00200369 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 12F77F9D210A624800200369 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 12F77FA4210A624800200369;
+			remoteInfo = "Apples 'n' Gold";
+		};
+		12F77FC1210A624A00200369 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 12F77F9D210A624800200369 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 12F77FA4210A624800200369;
+			remoteInfo = "Apples 'n' Gold";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		12F77FA5210A624800200369 /* Apples 'n' Gold.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Apples 'n' Gold.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		12F77FA8210A624800200369 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		12F77FAA210A624900200369 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		12F77FAD210A624900200369 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		12F77FAF210A624900200369 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		12F77FB0210A624900200369 /* Apples__n__Gold.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Apples__n__Gold.entitlements; sourceTree = "<group>"; };
+		12F77FB5210A624A00200369 /* Apples 'n' GoldTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Apples 'n' GoldTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		12F77FB9210A624A00200369 /* Apples__n__GoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Apples__n__GoldTests.swift; sourceTree = "<group>"; };
+		12F77FBB210A624A00200369 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		12F77FC0210A624A00200369 /* Apples 'n' GoldUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Apples 'n' GoldUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		12F77FC4210A624A00200369 /* Apples__n__GoldUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Apples__n__GoldUITests.swift; sourceTree = "<group>"; };
+		12F77FC6210A624A00200369 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		12F77FA2210A624800200369 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		12F77FB2210A624A00200369 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		12F77FBD210A624A00200369 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		12F77F9C210A624800200369 = {
+			isa = PBXGroup;
+			children = (
+				12F77FA7210A624800200369 /* Apples 'n' Gold */,
+				12F77FB8210A624A00200369 /* Apples 'n' GoldTests */,
+				12F77FC3210A624A00200369 /* Apples 'n' GoldUITests */,
+				12F77FA6210A624800200369 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		12F77FA6210A624800200369 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				12F77FA5210A624800200369 /* Apples 'n' Gold.app */,
+				12F77FB5210A624A00200369 /* Apples 'n' GoldTests.xctest */,
+				12F77FC0210A624A00200369 /* Apples 'n' GoldUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		12F77FA7210A624800200369 /* Apples 'n' Gold */ = {
+			isa = PBXGroup;
+			children = (
+				12F77FA8210A624800200369 /* AppDelegate.swift */,
+				12F77FAA210A624900200369 /* Assets.xcassets */,
+				12F77FAC210A624900200369 /* MainMenu.xib */,
+				12F77FAF210A624900200369 /* Info.plist */,
+				12F77FB0210A624900200369 /* Apples__n__Gold.entitlements */,
+			);
+			path = "Apples 'n' Gold";
+			sourceTree = "<group>";
+		};
+		12F77FB8210A624A00200369 /* Apples 'n' GoldTests */ = {
+			isa = PBXGroup;
+			children = (
+				12F77FB9210A624A00200369 /* Apples__n__GoldTests.swift */,
+				12F77FBB210A624A00200369 /* Info.plist */,
+			);
+			path = "Apples 'n' GoldTests";
+			sourceTree = "<group>";
+		};
+		12F77FC3210A624A00200369 /* Apples 'n' GoldUITests */ = {
+			isa = PBXGroup;
+			children = (
+				12F77FC4210A624A00200369 /* Apples__n__GoldUITests.swift */,
+				12F77FC6210A624A00200369 /* Info.plist */,
+			);
+			path = "Apples 'n' GoldUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		12F77FA4210A624800200369 /* Apples 'n' Gold */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 12F77FC9210A624A00200369 /* Build configuration list for PBXNativeTarget "Apples 'n' Gold" */;
+			buildPhases = (
+				12F77FA1210A624800200369 /* Sources */,
+				12F77FA2210A624800200369 /* Frameworks */,
+				12F77FA3210A624800200369 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Apples 'n' Gold";
+			productName = "Apples 'n' Gold";
+			productReference = 12F77FA5210A624800200369 /* Apples 'n' Gold.app */;
+			productType = "com.apple.product-type.application";
+		};
+		12F77FB4210A624A00200369 /* Apples 'n' GoldTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 12F77FCC210A624A00200369 /* Build configuration list for PBXNativeTarget "Apples 'n' GoldTests" */;
+			buildPhases = (
+				12F77FB1210A624A00200369 /* Sources */,
+				12F77FB2210A624A00200369 /* Frameworks */,
+				12F77FB3210A624A00200369 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				12F77FB7210A624A00200369 /* PBXTargetDependency */,
+			);
+			name = "Apples 'n' GoldTests";
+			productName = "Apples 'n' GoldTests";
+			productReference = 12F77FB5210A624A00200369 /* Apples 'n' GoldTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		12F77FBF210A624A00200369 /* Apples 'n' GoldUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 12F77FCF210A624A00200369 /* Build configuration list for PBXNativeTarget "Apples 'n' GoldUITests" */;
+			buildPhases = (
+				12F77FBC210A624A00200369 /* Sources */,
+				12F77FBD210A624A00200369 /* Frameworks */,
+				12F77FBE210A624A00200369 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				12F77FC2210A624A00200369 /* PBXTargetDependency */,
+			);
+			name = "Apples 'n' GoldUITests";
+			productName = "Apples 'n' GoldUITests";
+			productReference = 12F77FC0210A624A00200369 /* Apples 'n' GoldUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		12F77F9D210A624800200369 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0940;
+				LastUpgradeCheck = 0940;
+				ORGANIZATIONNAME = CodeDojo;
+				TargetAttributes = {
+					12F77FA4210A624800200369 = {
+						CreatedOnToolsVersion = 9.4.1;
+					};
+					12F77FB4210A624A00200369 = {
+						CreatedOnToolsVersion = 9.4.1;
+						TestTargetID = 12F77FA4210A624800200369;
+					};
+					12F77FBF210A624A00200369 = {
+						CreatedOnToolsVersion = 9.4.1;
+						TestTargetID = 12F77FA4210A624800200369;
+					};
+				};
+			};
+			buildConfigurationList = 12F77FA0210A624800200369 /* Build configuration list for PBXProject "Apples 'n' Gold" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 12F77F9C210A624800200369;
+			productRefGroup = 12F77FA6210A624800200369 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				12F77FA4210A624800200369 /* Apples 'n' Gold */,
+				12F77FB4210A624A00200369 /* Apples 'n' GoldTests */,
+				12F77FBF210A624A00200369 /* Apples 'n' GoldUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		12F77FA3210A624800200369 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12F77FAB210A624900200369 /* Assets.xcassets in Resources */,
+				12F77FAE210A624900200369 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		12F77FB3210A624A00200369 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		12F77FBE210A624A00200369 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		12F77FA1210A624800200369 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12F77FA9210A624800200369 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		12F77FB1210A624A00200369 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12F77FBA210A624A00200369 /* Apples__n__GoldTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		12F77FBC210A624A00200369 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12F77FC5210A624A00200369 /* Apples__n__GoldUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		12F77FB7210A624A00200369 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 12F77FA4210A624800200369 /* Apples 'n' Gold */;
+			targetProxy = 12F77FB6210A624A00200369 /* PBXContainerItemProxy */;
+		};
+		12F77FC2210A624A00200369 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 12F77FA4210A624800200369 /* Apples 'n' Gold */;
+			targetProxy = 12F77FC1210A624A00200369 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		12F77FAC210A624900200369 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				12F77FAD210A624900200369 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		12F77FC7210A624A00200369 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		12F77FC8210A624A00200369 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		12F77FCA210A624A00200369 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Apples 'n' Gold/Apples__n__Gold.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Apples 'n' Gold/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "codedojo.games.Apples--n--Gold";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Debug;
+		};
+		12F77FCB210A624A00200369 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Apples 'n' Gold/Apples__n__Gold.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Apples 'n' Gold/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "codedojo.games.Apples--n--Gold";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Release;
+		};
+		12F77FCD210A624A00200369 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Apples 'n' GoldTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "codedojo.games.Apples--n--GoldTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Apples 'n' Gold.app/Contents/MacOS/Apples 'n' Gold";
+			};
+			name = Debug;
+		};
+		12F77FCE210A624A00200369 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Apples 'n' GoldTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "codedojo.games.Apples--n--GoldTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Apples 'n' Gold.app/Contents/MacOS/Apples 'n' Gold";
+			};
+			name = Release;
+		};
+		12F77FD0210A624A00200369 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Apples 'n' GoldUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "codedojo.games.Apples--n--GoldUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_TARGET_NAME = "Apples 'n' Gold";
+			};
+			name = Debug;
+		};
+		12F77FD1210A624A00200369 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Apples 'n' GoldUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "codedojo.games.Apples--n--GoldUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_TARGET_NAME = "Apples 'n' Gold";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		12F77FA0210A624800200369 /* Build configuration list for PBXProject "Apples 'n' Gold" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12F77FC7210A624A00200369 /* Debug */,
+				12F77FC8210A624A00200369 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		12F77FC9210A624A00200369 /* Build configuration list for PBXNativeTarget "Apples 'n' Gold" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12F77FCA210A624A00200369 /* Debug */,
+				12F77FCB210A624A00200369 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		12F77FCC210A624A00200369 /* Build configuration list for PBXNativeTarget "Apples 'n' GoldTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12F77FCD210A624A00200369 /* Debug */,
+				12F77FCE210A624A00200369 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		12F77FCF210A624A00200369 /* Build configuration list for PBXNativeTarget "Apples 'n' GoldUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12F77FD0210A624A00200369 /* Debug */,
+				12F77FD1210A624A00200369 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 12F77F9D210A624800200369 /* Project object */;
+}

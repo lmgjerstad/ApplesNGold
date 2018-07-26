@@ -14,6 +14,7 @@
 
 #include "ApplePickerUpgrade.h"
 #include "MagicPotion.h"
+#include "IdlePicker.h"
 #include "menu.h"
 #include "absl/strings/str_format.h"
 
@@ -26,6 +27,7 @@ public:
     pickers_.emplace_back("Wizard", 2, 10, 5);
     pickers_.emplace_back("Tractor", 5, 15, 15);
     pickers_.emplace_back("Self Picker", 10, 30, 25);
+    idle_.emplace_back("Plucker", 0.25, 15);
 
     potions_.emplace_back("Red Potion", MagicPotion::Type::kApples, 10, 50, 400, "\033[1;91m");
     potions_.emplace_back("Yellow Potion", MagicPotion::Type::kGold, 15, 50, 400, "\033[1;93m");
@@ -35,6 +37,8 @@ public:
   void Run();
 private:
   void Save();
+  
+  void LoadIdleGain(int time_offline);
 
   void Load();
 
@@ -51,8 +55,10 @@ private:
   int platinum_;
   int platinum_prestige_;
   float lifetime_gold_;
+  int last_login_;
   std::vector<ApplePickerUpgrade> pickers_;
   std::vector<MagicPotion> potions_;
+  std::vector<IdlePicker> idle_;
 
   const char* ROOT = getenv("HOME");
 };
@@ -85,17 +91,27 @@ void ApplesNGold::Save() {
   out << "applePickers " << pickers_[0].level() << "\n";
   out << "wizards " << pickers_[1].level() << "\n";
   out << "tractors " << pickers_[2].level() << "\n";
-  out << "selfPickers " << pickers_[3].level() << "\n";
+  out << "selfPickers " << pickers_[3].level() << "\n\n";
+  out << "pluckers " << idle_[0].amount() << "\n\n";
+  out << "lastLogin " << std::time(nullptr) << "\n";
   out.close();
 }
 
+void ApplesNGold::LoadIdleGain(int time_offline) {
+  for(auto &idle : idle_) {
+    apples_ += idle.amount() * idle.multiplier() * time_offline;
+  }
+}
+
 void ApplesNGold::Load() {
+  last_login_ = std::time(nullptr);
+  
   std::ifstream in;
   in.open(SaveFile());
 
   std::string stat;
   float value;
-
+  
   while (in >> stat >> value) {
     try {
       if (stat == "apples") {
@@ -116,11 +132,15 @@ void ApplesNGold::Load() {
         pickers_[2].load(value);
       } else if (stat == "selfPickers") {
         pickers_[3].load(value);
+      } else if (stat == "pluckers") {
+        idle_[0].loadAmount(value);
+      } else if (stat == "lastLogin") {
+        LoadIdleGain((int)(last_login_ - value));
       } else {
         throw 1; // Activate catch statement
       }
     } catch (...) {
-      std::cout << "The save file \"" << filename_ << "\" is corrupted."
+      std::cout << "The save file at " << filename_ << " is corrupted."
                 << std::endl;
       sleep(2);
       std::cout << "\033[2J\033[H";
@@ -152,6 +172,9 @@ void ApplesNGold::Shop() {
   while (true) {
     gold_ = std::floorf(gold_ * 100) / 100;
     lifetime_gold_ = std::floorf(lifetime_gold_ * 100) / 100;
+    
+    last_login_ = std::time(nullptr);
+
     std::cout << "\033[2J\033[HSHOP" << std::endl;
     std::cout << "\033[1;93mGold: " << gold_ << "\033[0m" << std::endl
               << std::endl;
@@ -173,6 +196,25 @@ void ApplesNGold::Shop() {
         }
       });
     }
+    
+    menu.BlankLine();
+
+    for(auto &idle : idle_) {
+      menu.AddOption(idle.StoreLabel(), [this, &idle]() {
+        const float cost = idle.cost();
+        if(gold_ >= cost) {
+          idle.loadAmount(idle.amount() + 1);
+          std::cout << "You bought a(n) " << idle.name() << "!" << std::endl;
+          gold_ -= cost;
+          Save();
+          sleep(1);
+        } else {
+          std::cout << "Oops! It looks like you can't afford that!" << std::endl;
+          sleep(2);
+        }
+      });
+    }
+
     if(platinum_ > 0) {
       menu.BlankLine();
   
@@ -222,6 +264,9 @@ void ApplesNGold::Run() {
   while (true) {
     gold_ = std::floorf(gold_ * 100) / 100;
     lifetime_gold_ = std::floorf(lifetime_gold_ * 100) / 100;
+    
+    last_login_ = std::time(nullptr);
+
     Save();
 
     for(auto &potion : potions_) {

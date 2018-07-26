@@ -57,7 +57,7 @@ If it gets to the point where it becomes boring, go ahead and contribute here at
 ## 07-26-2018: v1.0.1
 
 - Added potions
-- Changed save file storage locations. (look [here](https://github.com/lmgjerstad/ApplesNGold/wiki/Move_Saves "Wiki: Move Saves").)
+- Changed save file storage locations. (look [here](https://github.com/lmgjerstad/ApplesNGold/wiki/Move-Saves "Wiki: Move Saves").)
 - Added self pickers to the shop.
 - Bug fixes.
 

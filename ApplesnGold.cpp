@@ -9,6 +9,8 @@
 #include <term.h>
 #include <unistd.h>
 #include <vector>
+#include <limits>
+#include <ios>
 
 #include <sys/stat.h>
 
@@ -25,6 +27,7 @@ public:
     pickers_.emplace_back("Apple Picker", 1.7, 10, 1);
     pickers_.emplace_back("Wizard", 2, 10, 5);
     pickers_.emplace_back("Tractor", 5, 15, 15);
+    pickers_.emplace_back("Self Picker", 10, 30, 25);
 
     potions_.emplace_back("Red Potion", MagicPotion::Type::kApples, 10, 50, 400, "\033[1;91m");
     potions_.emplace_back("Yellow Potion", MagicPotion::Type::kGold, 15, 50, 400, "\033[1;93m");
@@ -76,6 +79,7 @@ void ApplesNGold::Save() {
   out << "applePickers " << pickers_[0].level() << "\n";
   out << "wizards " << pickers_[1].level() << "\n";
   out << "tractors " << pickers_[2].level() << "\n";
+  out << "selfPickers " << pickers_[3].level() << "\n";
   out.close();
 }
 
@@ -104,6 +108,8 @@ void ApplesNGold::Load() {
         pickers_[1].load(value);
       } else if (stat == "tractors") {
         pickers_[2].load(value);
+      } else if (stat == "selfPickers") {
+        pickers_[3].load(value);
       } else {
         throw 1; // Activate catch statement
       }
@@ -169,12 +175,14 @@ void ApplesNGold::Shop() {
           const float cost = potion.cost();
           if (gold_ >= cost && potion.type() != MagicPotion::Type::kGold) {
             potion.setRoundNum(1);
+            potion.loadAmount(potion.amount() + 1);
             std::cout << "You bought a(n) " << potion.name() << "!" << std::endl;
             gold_ -= cost;
             Save();
             sleep(1);
           } else if(potion.type() == MagicPotion::Type::kGold && apples_ >= cost) {
             potion.setRoundNum(1);
+            potion.loadAmount(potion.amount() + 1);
             std::cout << "You bought a(n) " << potion.name() << "!" << std::endl;
             apples_ -= cost;
             Save();
@@ -209,16 +217,16 @@ void ApplesNGold::Run() {
     gold_ = std::floorf(gold_ * 100) / 100;
     lifetime_gold_ = std::floorf(lifetime_gold_ * 100) / 100;
     Save();
-    
+
     for(auto &potion : potions_) {
       if(potion.active()) {
         if(!potion.loop()) {
           if(potion.type() == MagicPotion::Type::kApples) {
-            apples_ += potion.multiplier();
+            apples_ += potion.multiplier() * potion.amount();
           } else if(potion.type() == MagicPotion::Type::kGold) {
-            gold_ += potion.multiplier();
+            gold_ += potion.multiplier() * potion.amount();
           } else {
-            platinum_ += potion.multiplier();
+            platinum_ += potion.multiplier() * potion.amount();
           }
         }
       } else {
@@ -233,6 +241,20 @@ void ApplesNGold::Run() {
     if (platinum_ > 0) {
       std::cout << "\033[1;96mPlatinum: " << platinum_ << "\033[0m" << std::endl
                 << std::endl;
+
+      if(potions_[0].active() ||
+         potions_[1].active() ||
+         potions_[2].active()) {
+        
+        std::cout << "Active Potions: ";
+
+        if(potions_[0].active()) { std::cout << potions_[0].ansi() << potions_[0].name() << "(" << potions_[0].amount() << ")\033[0m "; };
+        if(potions_[1].active()) { std::cout << potions_[1].ansi() << potions_[1].name() << "(" << potions_[1].amount() << ")\033[0m "; };
+        if(potions_[2].active()) { std::cout << potions_[2].ansi() << potions_[2].name() << "(" << potions_[2].amount() << ")\033[0m "; };
+        
+        std::cout << std::endl << std::endl;
+
+      }
     }
 
     Menu menu;

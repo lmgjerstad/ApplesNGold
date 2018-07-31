@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package applesngold;
+
+message Picker {
+  string name = 1;
+  int32 level = 2;
+}
+
+message Potion {
+  string name = 1;
+  int32 amount = 2;
+  int32 round = 3;
+}
+
+message Idle {
+  string name = 1;
+  int32 amount = 2;
+}
+
+message Save {
+  int32 apples = 1;
+  float gold = 2;
+  float lifetime_gold = 3;
+  int32 platinum = 4;
+  int32 platinum_gain = 5;
+  int64 last_login = 6;
+  repeated Picker picker = 7;
+  repeated Potion potion = 8;
+  repeated Idle idle = 9;
+}

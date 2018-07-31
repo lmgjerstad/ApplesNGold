@@ -17,6 +17,7 @@
 #include "IdlePicker.h"
 #include "menu.h"
 #include "absl/strings/str_format.h"
+#include "ApplesNGold/apples_n_gold.pb.h"
 
 class ApplesNGold {
 public:
@@ -29,18 +30,27 @@ public:
     pickers_.emplace_back("Self Picker", 10, 30, 25);
     idle_.emplace_back("Plucker", 0.25, 15);
 
-    potions_.emplace_back("Red Potion", MagicPotion::Type::kApples, 10, 50, 400, "\033[1;91m");
-    potions_.emplace_back("Yellow Potion", MagicPotion::Type::kGold, 15, 50, 400, "\033[1;93m");
-    potions_.emplace_back("Blue Potion", MagicPotion::Type::kPlatinum, 1, 500, 15000, "\033[1;96m");
+    potions_.emplace_back("Red Potion", MagicPotion::Type::kApples, 10, 50, 400,
+                          "\033[1;91m");
+    potions_.emplace_back("Yellow Potion", MagicPotion::Type::kGold, 15, 50,
+                          400, "\033[1;93m");
+    potions_.emplace_back("Blue Potion", MagicPotion::Type::kPlatinum, 1, 500,
+                          15000, "\033[1;96m");
   }
 
   void Run();
+
 private:
   void Save();
-  
+
   void LoadIdleGain(int time_offline);
 
   void Load();
+  void LegacyLoad();
+
+  template <typename T, typename P>
+  void LoadVector(std::vector<T> *vec,
+                  const google::protobuf::RepeatedPtrField<P> &protos);
 
   const std::string &SaveFile();
 
@@ -60,11 +70,12 @@ private:
   std::vector<MagicPotion> potions_;
   std::vector<IdlePicker> idle_;
 
-  const char* ROOT = getenv("HOME");
+  const char *ROOT = getenv("HOME");
 };
 
 const std::string &ApplesNGold::SaveFile() {
   if (filename_.empty()) {
+
     std::string temp = name_;
     temp.erase(temp.begin(), std::find_if(temp.begin(), temp.end(), [](int ch) {
                  return !std::isspace(ch);
@@ -81,29 +92,81 @@ const std::string &ApplesNGold::SaveFile() {
 }
 
 void ApplesNGold::Save() {
-  std::ofstream out;
-  out.open(SaveFile(), std::ofstream::out | std::ofstream::trunc);
-  out << "apples " << apples_ << "\n";
-  out << "gold " << gold_ << "\n";
-  out << "lifetimeGold " << lifetime_gold_ << "\n";
-  out << "platinum " << platinum_ << "\n";
-  out << "platinumGain " << platinum_prestige_ << "\n\n";
-  out << "applePickers " << pickers_[0].level() << "\n";
-  out << "wizards " << pickers_[1].level() << "\n";
-  out << "tractors " << pickers_[2].level() << "\n";
-  out << "selfPickers " << pickers_[3].level() << "\n\n";
-  out << "pluckers " << idle_[0].amount() << "\n\n";
-  out << "lastLogin " << std::time(nullptr) << "\n";
+  applesngold::Save proto;
+  proto.set_apples(apples_);
+  proto.set_gold(gold_);
+  proto.set_lifetime_gold(lifetime_gold_);
+  proto.set_platinum(platinum_);
+  proto.set_platinum_gain(platinum_prestige_);
+  proto.set_last_login(std::time(nullptr));
+
+  for (const auto& picker : pickers_) {
+    *proto.add_picker() = picker.Save();
+  }
+
+  for (const auto& potion : potions_) {
+    *proto.add_potion() = potion.Save();
+  }
+
+  for (const auto& idle : idle_) {
+    *proto.add_idle() = idle.Save();
+  }
+
+  std::ofstream out(SaveFile(), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+  proto.SerializeToOstream(&out);
   out.close();
 }
 
 void ApplesNGold::LoadIdleGain(int time_offline) {
   for(auto &idle : idle_) {
     apples_ += idle.amount() * idle.multiplier() * time_offline;
+    std::cout << "added " << idle.amount() << " * " << idle.multiplier() << " * " << time_offline << std::endl;
+  }
+}
+
+template <typename T, typename P>
+void ApplesNGold::LoadVector(std::vector<T>* vec, const google::protobuf::RepeatedPtrField<P> &protos) {
+  std::map<std::string, T *> map;
+  for (auto &entry : *vec) {
+    map[entry.name()] = &entry;
+  }
+  for (const auto &entry : protos) {
+    auto iter = map.find(entry.name());
+    if (iter == map.end()) {
+      std::cout << "The save file at " << filename_ << " is corrupted."
+                << std::endl;
+      sleep(2);
+      std::cout << "\033[2J\033[H";
+      exit(1);
+    }
+    iter->second->Load(entry);
   }
 }
 
 void ApplesNGold::Load() {
+  last_login_ = std::time(nullptr);
+
+  std::ifstream in(SaveFile());
+  applesngold::Save proto;
+  if (!proto.ParseFromIstream(&in)) {
+    LegacyLoad();
+    return;
+  }
+  apples_ = proto.apples();
+  gold_ = proto.gold();
+  lifetime_gold_ = proto.lifetime_gold();
+  platinum_ = proto.platinum();
+  platinum_prestige_ = proto.platinum_gain();
+
+  LoadVector(&pickers_, proto.picker());
+  LoadVector(&potions_, proto.potion());
+  LoadVector(&idle_, proto.idle());
+
+  std::cout << proto.DebugString() << std::endl;
+  LoadIdleGain(last_login_ - proto.last_login());
+}
+
+void ApplesNGold::LegacyLoad() {
   last_login_ = std::time(nullptr);
   
   std::ifstream in;
@@ -125,15 +188,15 @@ void ApplesNGold::Load() {
       } else if (stat == "platinumGain") {
         platinum_prestige_ = value;
       } else if (stat == "applePickers") {
-        pickers_[0].load(value);
+        pickers_[0].Load(value);
       } else if (stat == "wizards") {
-        pickers_[1].load(value);
+        pickers_[1].Load(value);
       } else if (stat == "tractors") {
-        pickers_[2].load(value);
+        pickers_[2].Load(value);
       } else if (stat == "selfPickers") {
-        pickers_[3].load(value);
+        pickers_[3].Load(value);
       } else if (stat == "pluckers") {
-        idle_[0].loadAmount(value);
+        idle_[0].Load(value);
       } else if (stat == "lastLogin") {
         LoadIdleGain((int)(last_login_ - value));
       } else {
@@ -203,7 +266,7 @@ void ApplesNGold::Shop() {
       menu.AddOption(idle.StoreLabel(), [this, &idle]() {
         const float cost = idle.cost();
         if(gold_ >= cost) {
-          idle.loadAmount(idle.amount() + 1);
+          idle.Load(idle.amount() + 1);
           std::cout << "You bought a(n) " << idle.name() << "!" << std::endl;
           gold_ -= cost;
           Save();
@@ -223,14 +286,14 @@ void ApplesNGold::Shop() {
           const float cost = potion.cost();
           if (gold_ >= cost && potion.type() != MagicPotion::Type::kGold) {
             potion.setRoundNum(1);
-            potion.loadAmount(potion.amount() + 1);
+            potion.Load(potion.amount() + 1);
             std::cout << "You bought a(n) " << potion.name() << "!" << std::endl;
             gold_ -= cost;
             Save();
             sleep(1);
           } else if(potion.type() == MagicPotion::Type::kGold && apples_ >= cost) {
             potion.setRoundNum(1);
-            potion.loadAmount(potion.amount() + 1);
+            potion.Load(potion.amount() + 1);
             std::cout << "You bought a(n) " << potion.name() << "!" << std::endl;
             apples_ -= cost;
             Save();
@@ -362,7 +425,7 @@ void ApplesNGold::Run() {
               apples_ = 0;
               gold_ = 0;
               for (auto &picker : pickers_) {
-                picker.load(0);
+                picker.Load(0);
               }
 
               platinum_ += platinum_prestige_;

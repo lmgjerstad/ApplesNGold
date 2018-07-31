@@ -3,80 +3,44 @@
 
 #include <string>
 
-#include "absl/strings/str_format.h"
+#include "ApplesNGold/apples_n_gold.pb.h"
 
 class MagicPotion {
 public:
   enum class Type { kApples, kGold, kPlatinum };
 
   MagicPotion(std::string name, Type type, int duration, float multiplier,
-              float price, std::string ansi)
-      : name_(name), type_(type), duration_(duration), multiplier_(multiplier),
-        price_(price), ansi_(ansi), roundNum_(0), amount_(0) {}
+              float price, std::string ansi);
 
-  float cost() { return price_; }
+  float cost() const { return price_; }
 
-  int duration() { return duration_; }
+  int duration() const { return duration_; }
 
-  Type type() { return type_; }
+  Type type() const { return type_; }
 
-  std::string name() { return name_; }
+  const std::string& name() const { return name_; }
 
-  int roundNum() { return roundNum_; }
+  int roundNum() const { return roundNum_; }
 
   void setRoundNum(int num) { roundNum_ = num; }
 
-  float multiplier() { return multiplier_; }
+  float multiplier() const { return multiplier_; }
   
-  int amount() { return amount_; }
+  int amount() const { return amount_; }
   
-  void loadAmount(int amount) { amount_ = amount; }
+  void Load(int amount) { amount_ = amount; }
 
-  std::string ansi() { return ansi_; }
+  bool Load(const applesngold::Potion& proto);
 
-  bool loop() {
-    if (roundNum_ <= duration_ && roundNum_ != 0) {
-      ++roundNum_;
-      return false;
-    } else if (roundNum_ == 0) {
-      roundNum_ = 1;
-      return false;
-    }
+  applesngold::Potion Save() const;
 
-    roundNum_ = 0;
-    return true;
-  }
+  const std::string& ansi() { return ansi_; }
 
-  std::string StoreLabel() {
-    switch (type_) {
-    case Type::kApples:
-      return absl::StrFormat(
-          "%s%s\033[0m - %0.02f Gold - %d Round(s) for %d apples each - %d active", ansi_,
-          name_, cost(), duration(), (int)multiplier(), amount_);
-      break;
-    case Type::kGold:
-      return absl::StrFormat(
-          "%s%s\033[0m - %d Apples - %d Round(s) for %0.02f gold each - %d active", ansi_,
-          name_, (int)cost(), duration(), multiplier(), amount_);
-      break;
-    case Type::kPlatinum:
-      return absl::StrFormat(
-          "%s%s\033[0m - %0.02f Gold - %d Round(s) for %d platinum each - %d active", ansi_,
-          name_, cost(), duration(), (int)multiplier(), amount_);
-      break;
-    default:
+  bool loop();
 
-      break;
-    }
-  }
+  std::string StoreLabel() const;
 
-  bool active() {
-    if (roundNum_ <= duration() && roundNum_ != 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  bool active() const;
 
 private:
   const std::string name_;

@@ -7,7 +7,9 @@ cc_library(
 cc_library(
     name = "apple_picker_upgrade",
     hdrs = ["ApplePickerUpgrade.h"],
+    srcs = ["ApplePickerUpgrade.cpp"],
     deps = [
+        ":apples_n_gold_cc_proto",
         "@com_google_absl//absl/strings:str_format",
     ],
 )
@@ -15,8 +17,9 @@ cc_library(
 cc_library(
     name = "magic_potion",
     hdrs = ["MagicPotion.h"],
+    srcs = ["MagicPotion.cpp"],
     deps = [
-        ":apple_picker_upgrade",
+        ":apples_n_gold_cc_proto",
         "@com_google_absl//absl/strings:str_format",
     ],
 )
@@ -24,7 +27,9 @@ cc_library(
 cc_library(
     name = "idle_picker",
     hdrs = ["IdlePicker.h"],
+    srcs = ["IdlePicker.cpp"],
     deps = [
+        ":apples_n_gold_cc_proto",
         "@com_google_absl//absl/strings:str_format",
     ],
 )
@@ -39,4 +44,14 @@ cc_binary(
         ":idle_picker",
         "@com_google_absl//absl/strings:str_format",
     ],
+)
+
+proto_library(
+    name = "apples_n_gold_proto",
+    srcs = ["apples_n_gold.proto"],
+)
+
+cc_proto_library(
+    name = "apples_n_gold_cc_proto",
+    deps = [":apples_n_gold_proto"],
 )

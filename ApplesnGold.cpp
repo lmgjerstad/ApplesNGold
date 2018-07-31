@@ -120,7 +120,6 @@ void ApplesNGold::Save() {
 void ApplesNGold::LoadIdleGain(int time_offline) {
   for(auto &idle : idle_) {
     apples_ += idle.amount() * idle.multiplier() * time_offline;
-    std::cout << "added " << idle.amount() << " * " << idle.multiplier() << " * " << time_offline << std::endl;
   }
 }
 

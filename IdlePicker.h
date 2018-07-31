@@ -2,6 +2,7 @@
 #define __IDLEPICKER_H_INCLUDED__
 
 #include <string>
+#include <cmath>
 
 #include "ApplesNGold/apples_n_gold.pb.h"
 
@@ -16,7 +17,7 @@ public:
 
   float base_price() const { return base_price_; }
 
-  float cost() const { return multiplier_ * base_price_; }
+  float cost() const { return std::pow(multiplier_, amount_) * base_price_; }
 
   int amount() const { return amount_; }
 

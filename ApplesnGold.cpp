@@ -161,7 +161,6 @@ void ApplesNGold::Load() {
   LoadVector(&potions_, proto.potion());
   LoadVector(&idle_, proto.idle());
 
-  std::cout << proto.DebugString() << std::endl;
   LoadIdleGain(last_login_ - proto.last_login());
 }
 

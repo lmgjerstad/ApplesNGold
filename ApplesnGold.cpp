@@ -28,7 +28,7 @@ public:
     pickers_.emplace_back("Wizard", 2, 10, 5);
     pickers_.emplace_back("Tractor", 5, 15, 15);
     pickers_.emplace_back("Self Picker", 10, 30, 25);
-    idle_.emplace_back("Plucker", 0.25, 15);
+    idle_.emplace_back("Plucker", 1.5, 15); // The 1.5 is divided so that you actually get 0.25. This is to keep the price from glitching.
 
     potions_.emplace_back("Red Potion", MagicPotion::Type::kApples, 10, 50, 400,
                           "\033[1;91m");
@@ -119,6 +119,7 @@ void ApplesNGold::Save() {
 
 void ApplesNGold::LoadIdleGain(int time_offline) {
   for(auto &idle : idle_) {
+    if(idle.name() == "Plucker") { apples_ += idle.amount() * idle.multiplier() * time_offline / 6; continue; }
     apples_ += idle.amount() * idle.multiplier() * time_offline;
   }
 }
@@ -237,6 +238,7 @@ void ApplesNGold::Shop() {
     last_login_ = std::time(nullptr);
 
     std::cout << "\033[2J\033[HSHOP" << std::endl;
+    std::cout << "\033[1;91mApples: " << apples_ << "\033[0m" << std::endl;
     std::cout << "\033[1;93mGold: " << gold_ << "\033[0m" << std::endl
               << std::endl;
 
